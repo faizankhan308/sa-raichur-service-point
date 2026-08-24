@@ -1,7 +1,4 @@
 const services = [
-  // ==========================================
-  // CLEANING SERVICES
-  // ==========================================
   {
     id: "home-deep",
     name: "Home Deep Cleaning",
@@ -10,7 +7,7 @@ const services = [
     originalPrice: 2499,
     rating: 4.85,
     reviewCount: 320,
-    description: "Intense deep cleaning for your entire apartment or independent house. Includes kitchen, bathrooms, balcony, windows, and floor scrubbing.",
+    description: "Intense deep cleaning for your entire apartment or independent house. Includes kitchen degreasing, bathrooms descaling, balcony wash, windows, and mechanized floor scrubbing.",
     benefits: [
       "Spotless tiled floors and wall panels",
       "Thorough degreasing of kitchen cabinets & slab",
@@ -18,82 +15,40 @@ const services = [
       "Removal of deep dust layers from hard-to-reach areas"
     ],
     inclusions: [
-      "Manual and mechanized scrubbing of floors",
+      "Mechanized and manual floor scrubbing",
       "Balcony wash and window mesh cleaning",
-      "Bathroom fitting polishing & descaling",
+      "Bathroom fittings descaling & mirror polishing",
       "Dusting of fans, lights, switches, and wardrobes"
     ],
     image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80"
   },
   {
-    id: "office-deep",
-    name: "Office Deep Cleaning",
+    id: "water-tank-sump",
+    name: "Water Tank & Sump Cleaning",
     category: "cleaning",
-    price: 2999,
-    originalPrice: 3999,
-    rating: 4.9,
-    reviewCount: 110,
-    description: "Complete commercial sanitization and deep wash for offices, clinics, and customer reception areas. Flexible scheduling to minimize business disruption.",
+    price: 1199,
+    originalPrice: 1499,
+    rating: 4.90,
+    reviewCount: 380,
+    description: "6-stage mechanized cleaning of overhead residential Sintex/plastic water tanks and underground sumps. Removes mud sediment, algae buildup, and sanitizes storage.",
     benefits: [
-      "Improved workplace hygiene and staff safety",
-      "Polished, professional looking corporate environment",
-      "Thorough carpet and workstation dusting"
+      "Removes mud sediment and algae buildup",
+      "Maintains clean water for drinking & bathing",
+      "Avoids pump blockages and valve rust",
+      "UV disinfection to kill lingering pathogens"
     ],
     inclusions: [
-      "Disinfection of keyboard, mouse, and desks",
-      "Glass partition cleaning and polishing",
-      "Mechanized floor polishing & scrubbing",
-      "Cafeteria and pantry deep sanitization"
+      "Mechanized dewatering of dirty water",
+      "High-pressure jet wash of walls & floor",
+      "Vacuuming sludge slurry",
+      "UV ray sterilizer scanning",
+      "Anti-bacterial wall spray treatment"
     ],
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80"
+    image: "/water-tank-sump.png"
   },
   {
-    id: "commercial-clean",
-    name: "Commercial Cleaning",
-    category: "cleaning",
-    price: 4999,
-    originalPrice: 5999,
-    rating: 4.8,
-    reviewCount: 85,
-    description: "Deep scrubbing and sanitation services for malls, warehouses, hotels, and retail stores in Raichur.",
-    benefits: [
-      "Maintains clean health standards for public visits",
-      "Removes industrial dust and stains",
-      "Custom schedules for night shifts"
-    ],
-    inclusions: [
-      "Staircase and lobby cleaning",
-      "Signage and external wall glass wash",
-      "High-pressure wash of entry and parking zones",
-      "Restroom deep sanitization"
-    ],
-    image: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    id: "bathroom-deep",
-    name: "Bathroom/Washroom Deep Cleaning",
-    category: "cleaning",
-    price: 399,
-    originalPrice: 499,
-    rating: 4.75,
-    reviewCount: 450,
-    description: "Mechanized deep cleaning of wall tiles, commode, taps, and mirror descaling for a germ-free bathroom.",
-    benefits: [
-      "Stain-free walls and mirrors",
-      "Eliminates hard water scaling and foul odors",
-      "Kills 99.9% of bacteria and viruses"
-    ],
-    inclusions: [
-      "Acid-based tile stain scrubbing",
-      "Polishing of taps, shower head, and health faucet",
-      "Sanitizing inside and outside the commode",
-      "Drain blockage checks and sanitizing"
-    ],
-    image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    id: "sofa-clean",
-    name: "Sofa & Furniture Cleaning",
+    id: "sofa-cleaning",
+    name: "Sofa Cleaning",
     category: "cleaning",
     price: 499,
     originalPrice: 699,
@@ -114,12 +69,12 @@ const services = [
     image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80"
   },
   {
-    id: "carpet-clean",
+    id: "carpet-cleaning",
     name: "Carpet Cleaning",
     category: "cleaning",
     price: 599,
     originalPrice: 799,
-    rating: 4.7,
+    rating: 4.70,
     reviewCount: 160,
     description: "Heavy-duty shampooing and vacuum extraction for residential and commercial carpets.",
     benefits: [
@@ -136,7 +91,7 @@ const services = [
     image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80"
   },
   {
-    id: "mattress-clean",
+    id: "mattress-cleaning",
     name: "Mattress Cleaning",
     category: "cleaning",
     price: 499,
@@ -158,29 +113,7 @@ const services = [
     image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=600&q=80"
   },
   {
-    id: "kitchen-clean",
-    name: "Kitchen Cleaning",
-    category: "cleaning",
-    price: 999,
-    originalPrice: 1299,
-    rating: 4.86,
-    reviewCount: 220,
-    description: "Degreasing and descaling of kitchen slabs, cabinets, tiles, sinks, and window grills.",
-    benefits: [
-      "Removes stubborn grease and oil smoke films",
-      "Clean cabinet interior/exterior storage environment",
-      "Restores sink glossiness"
-    ],
-    inclusions: [
-      "Wiping cabinet cabinets internally & externally",
-      "Scrubbing tiles behind the stove and cooktop",
-      "Cleaning window pane frames and exhaust fan",
-      "Polishing tap fittings & steel sink"
-    ],
-    image: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    id: "chimney-clean",
+    id: "kitchen-chimney",
     name: "Kitchen Chimney Cleaning",
     category: "cleaning",
     price: 699,
@@ -199,56 +132,52 @@ const services = [
       "Cleaning internal baffle plates",
       "Outer body glass cleaning and testing"
     ],
-    image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=600&q=80"
   },
   {
-    id: "water-tank",
-    name: "Water Tank Cleaning",
+    id: "bathroom-deep",
+    name: "Bathroom Deep Cleaning",
     category: "cleaning",
-    price: 799,
-    originalPrice: 999,
-    rating: 4.91,
-    reviewCount: 380,
-    description: "6-stage mechanized cleaning of overhead residential plastic/sintex water storage tanks.",
+    price: 399,
+    originalPrice: 499,
+    rating: 4.75,
+    reviewCount: 450,
+    description: "Mechanized deep cleaning of wall tiles, commode, taps, and mirror descaling for a germ-free bathroom.",
     benefits: [
-      "Removes mud sediment and algae buildup",
-      "Maintains clean water for drinking & bathing",
-      "UV disinfection to kill lingering pathogens"
+      "Stain-free walls and mirrors",
+      "Eliminates hard water scaling and foul odors",
+      "Kills 99.9% of bacteria and viruses"
     ],
     inclusions: [
-      "Mechanized dewatering of dirty water",
-      "High-pressure jet wash of walls & floor",
-      "Vacuuming sludge slurry",
-      "UV ray sterilizer scanning"
-    ],
-    image: "https://images.unsplash.com/photo-1508873696983-2df519fcd3ad?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    id: "sump-clean",
-    name: "Underground Tank & Sump Cleaning",
-    category: "cleaning",
-    price: 1199,
-    originalPrice: 1499,
-    rating: 4.88,
-    reviewCount: 290,
-    description: "Deep scrubbing and high-pressure washing for large underground sumps. Removes heavy mud sludge.",
-    benefits: [
-      "Avoids pump blockages and valve rust",
-      "Fresh clean base storage for municipal water",
-      "Bactericide wall treatment"
-    ],
-    inclusions: [
-      "Manual wall scrubbing and mud extraction",
-      "Vacuuming floor slurry using sludge pumps",
-      "High-pressure jet washing",
-      "Anti-bacterial chemical spray"
+      "Acid-based tile stain scrubbing",
+      "Polishing of taps, shower head, and health faucet",
+      "Sanitizing inside and outside the commode",
+      "Drain blockage checks and sanitizing"
     ],
     image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80"
   },
-
-  // ==========================================
-  // HOME MAINTENANCE SERVICES
-  // ==========================================
+  {
+    id: "floor-scrubbing",
+    name: "Floor Scrubbing & Polishing",
+    category: "cleaning",
+    price: 999,
+    originalPrice: 1299,
+    rating: 4.80,
+    reviewCount: 110,
+    description: "Mechanized floor scrubbing and polishing using professional single-disc machines to restore the natural shine of your tiles, marble, or granite.",
+    benefits: [
+      "Removes deep-set dirt, grime, and footprints",
+      "Restores shine and luster to dull floors",
+      "Protects flooring with a clean shine barrier"
+    ],
+    inclusions: [
+      "Machine scrubbing with specialized tile cleaners",
+      "Stain removal treatment",
+      "Washing and drying of floor area",
+      "Application of high-shine protective polish"
+    ],
+    image: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=600&q=80"
+  },
   {
     id: "ac-service",
     name: "AC Service & Repair",
@@ -269,7 +198,7 @@ const services = [
       "Outdoor unit general dusting & pressure wash",
       "Diagnostics of current amp and gas pressure"
     ],
-    image: "https://images.unsplash.com/photo-1621905252507-b354bc25edac?auto=format&fit=crop&w=600&q=80"
+    image: "/ac-service.jpg"
   },
   {
     id: "plumbing",
@@ -291,7 +220,7 @@ const services = [
       "Water meter or valve installation",
       "Post-work cleanup"
     ],
-    image: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&w=600&q=80"
+    image: "/plumbing.jpg"
   },
   {
     id: "electrical",
@@ -313,29 +242,7 @@ const services = [
       "Geyser heating element testing & fix",
       "MCB trip diagnostics"
     ],
-    image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    id: "carpenter",
-    name: "Carpenter Services",
-    category: "maintenance",
-    price: 199,
-    originalPrice: 299,
-    rating: 4.76,
-    reviewCount: 190,
-    description: "Door alignments, cupboard hinges, lock replacements, drawer track repairs, and new furniture assembly.",
-    benefits: [
-      "Fixes squeaking doors & loose handles",
-      "Professional tools for smooth wooden finishes",
-      "Saves time on complex assembly manuals"
-    ],
-    inclusions: [
-      "Hinge replacement and door latch adjustments",
-      "Installing cupboard magnetic locks & handles",
-      "Assembling ready-to-assemble tables/beds",
-      "Drilling work for hanging frames/mirrors"
-    ],
-    image: "https://images.unsplash.com/photo-1534224039826-c7a0dea0e66a?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80"
   },
   {
     id: "painting",
@@ -379,12 +286,8 @@ const services = [
       "Drainage opening treatment",
       "Follow-up advice"
     ],
-    image: "https://images.unsplash.com/photo-1608613304899-ea8098577e38?auto=format&fit=crop&w=600&q=80"
+    image: "/pest-control.png"
   },
-
-  // ==========================================
-  // OTHER SERVICES
-  // ==========================================
   {
     id: "solar-panel",
     name: "Solar Panel Cleaning",
@@ -407,94 +310,6 @@ const services = [
     image: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=600&q=80"
   },
   {
-    id: "solar-heater",
-    name: "Solar Water Heater Cleaning",
-    category: "others",
-    price: 1199,
-    originalPrice: 1599,
-    rating: 4.8,
-    reviewCount: 90,
-    description: "Chemical descaling of solar glass vacuum tubes and storage tank flushing to fix slow water flow.",
-    benefits: [
-      "Increases water temperature and heating speed",
-      "Descales hard water salts blocking joints",
-      "Prevents tank leakage and joint rust"
-    ],
-    inclusions: [
-      "Dismantling and flushing glass vacuum tubes",
-      "Rinsing tank inner chamber",
-      "Replacement of joint washers if dripping",
-      "System testing"
-    ],
-    image: "https://images.unsplash.com/photo-1613665813446-82a78c468a1d?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    id: "car-wash",
-    name: "Doorstep Car Wash",
-    category: "others",
-    price: 499,
-    originalPrice: 699,
-    rating: 4.84,
-    reviewCount: 370,
-    description: "Professional high-pressure foam wash and interior vacuuming performed at your own parking space.",
-    benefits: [
-      "Saves hours driving to local washing garages",
-      "Eco-friendly high pressure water guns",
-      "Glossy dashboard polish finish"
-    ],
-    inclusions: [
-      "Exterior shampoo foam wash and body dry",
-      "Cabin vacuuming (mats, seats, boot)",
-      "Glass cleaning and tyre dressing",
-      "Dashboard polish wiping"
-    ],
-    image: "https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    id: "bike-wash",
-    name: "Bike Wash",
-    category: "others",
-    price: 199,
-    originalPrice: 299,
-    rating: 4.75,
-    reviewCount: 150,
-    description: "Pressure water cleaning, mud removal, degreasing chain, and chain lube application at your gate.",
-    benefits: [
-      "Slick look and quiet chain rotation",
-      "Removes mud grease from wheels & engine",
-      "Done in 20 minutes"
-    ],
-    inclusions: [
-      "High-pressure wash",
-      "Active foam scrubbing",
-      "Chain wash and diesel spray grease wash",
-      "Lubricating drive chain"
-    ],
-    image: "https://images.unsplash.com/photo-1599819811279-d5ad9cccf838?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    id: "home-shifting",
-    name: "Home Shifting",
-    category: "others",
-    price: 3499,
-    originalPrice: 4499,
-    rating: 4.9,
-    reviewCount: 120,
-    description: "Safe packing, loading, local transportation, unloading, and unpacking services within Raichur.",
-    benefits: [
-      "Stress-free local shifting",
-      "Zero damage to fragile items",
-      "Experienced loaders and drivers"
-    ],
-    inclusions: [
-      "Bubble wrapping electronics and glassware",
-      "Packing boxes and carton layout loading",
-      "Transporting in closed commercial vehicles",
-      "Unloading and sorting boxes into designated rooms"
-    ],
-    image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=600&q=80"
-  },
-  {
     id: "packers-movers",
     name: "Packers & Movers",
     category: "others",
@@ -515,30 +330,33 @@ const services = [
       "Transport, delivery, and unpacking at destination"
     ],
     image: "https://images.unsplash.com/photo-1580674684081-7617fbf3d745?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    id: "decoration",
-    name: "Decoration Services",
-    category: "others",
-    price: 2499,
-    originalPrice: 2999,
-    rating: 4.85,
-    reviewCount: 105,
-    description: "Custom balloon arches, backdrop banners, naming ceremonies, birthday setups, and home welcome decors.",
-    benefits: [
-      "Creative and modern design layouts",
-      "Done in 2-3 hours before the party",
-      "No damage to wall paints (uses masking tape)"
-    ],
-    inclusions: [
-      "Up to 200 color-themed metallic balloons",
-      "Foil star/alphabet balloon set",
-      "Ribbons, LED fairy lights, and backdrop draping",
-      "Theme layout setup by decor experts"
-    ],
-    image: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=600&q=80"
   }
 ];
+
+export const getOrderedServices = (apiServices = []) => {
+  if (!apiServices || apiServices.length === 0) {
+    return services;
+  }
+  
+  // Create a map of API services for quick lookup
+  const apiMap = new Map(apiServices.map(s => [s.id, s]));
+  
+  // Reconstruct services in exact sequence, merging database values
+  return services.map(fallbackService => {
+    const apiService = apiMap.get(fallbackService.id);
+    if (apiService) {
+      return {
+        ...fallbackService,
+        ...apiService,
+        id: fallbackService.id, // Enforce strict id matching
+        name: fallbackService.name, // Keep exact clean name
+        category: fallbackService.category, // Keep exact clean category
+        image: fallbackService.image // Enforce local high-quality verified images
+      };
+    }
+    return fallbackService;
+  });
+};
 
 export default services;
 export { services };

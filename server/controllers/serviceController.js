@@ -39,13 +39,25 @@ const saveMockServices = (services) => {
 const seedServices = async () => {
   if (!getIsConnected()) return;
   try {
-    const count = await Service.countDocuments();
-    if (count === 0) {
-      await Service.insertMany(initialServices);
-      console.log('✅ Services collection seeded with initial services!');
+    const seedIds = initialServices.map(s => s.id);
+    
+    // 1. Delete legacy services not in the 15-item catalog
+    const deleteResult = await Service.deleteMany({ id: { $nin: seedIds } });
+    if (deleteResult.deletedCount > 0) {
+      console.log(`🧹 Cleared ${deleteResult.deletedCount} legacy service(s) from database.`);
     }
+
+    // 2. Upsert each of the 15 services to ensure they have correct default details and image paths
+    for (const service of initialServices) {
+      await Service.findOneAndUpdate(
+        { id: service.id },
+        { $set: service },
+        { upsert: true, new: true }
+      );
+    }
+    console.log('✅ Services collection synchronized with final 15-item catalog!');
   } catch (error) {
-    console.error(`❌ Failed to seed services: ${error.message}`);
+    console.error(`❌ Failed to synchronize services database: ${error.message}`);
   }
 };
 
