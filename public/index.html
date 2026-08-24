@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S A Raichur Service Point | All Home Services Under One Roof</title>
+  
+  <!-- Google Fonts: Outfit for heading, Inter for body -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Floating Contact Action Buttons (Crucial for Local Conversions) -->
+  <div class="floating-contact-actions">
+    <a href="tel:7411741418" class="float-btn float-call" title="Call Us Now">
+      <span>📞 Call Now</span>
+    </a>
+    <a href="https://wa.me/917411741418?text=Hello%21%20I%20am%20interested%20in%20your%20services.%20Can%20you%20help%20me%3F" target="_blank" class="float-btn float-wa" title="WhatsApp Chat">
+      <span>💬 WhatsApp</span>
+    </a>
+  </div>
+
+  <!-- Primary Header & Navigation -->
+  <header class="main-header">
+    <div class="header-container">
+      <div class="logo-area" onclick="showHomeView()">
+        <!-- Inline SVG Recreation of their logo with Royal Crown, SA monogram, and clean styling -->
+        <svg class="brand-logo-svg" viewBox="0 0 100 100" width="48" height="48" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="48" fill="#f0f5ff" stroke="#0052cc" stroke-width="2"/>
+          <!-- Crown -->
+          <path d="M35 32 L40 24 L50 29 L60 24 L65 32 Z" fill="#00a3c4"/>
+          <circle cx="40" cy="24" r="2" fill="#0052cc"/>
+          <circle cx="50" cy="29" r="2" fill="#0052cc"/>
+          <circle cx="60" cy="24" r="2" fill="#0052cc"/>
+          <!-- SA monogram -->
+          <text x="32" y="65" font-family="'Outfit', sans-serif" font-size="34" font-weight="900" fill="#0052cc">S</text>
+          <text x="52" y="75" font-family="'Outfit', sans-serif" font-size="34" font-weight="900" fill="#0052cc">A</text>
+          <!-- Accent ribbon -->
+          <path d="M20 78 Q50 85 80 78" fill="none" stroke="#00a3c4" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <div class="logo-text">
+          <h1>S A RAICHUR</h1>
+          <h2>SERVICE POINT</h2>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <div class="location-badge">
+          <span class="loc-icon">📍</span>
+          <span class="loc-text">Raichur, KA</span>
+        </div>
+        
+        <div class="search-bar-header">
+          <input type="text" id="global-search" placeholder="Search for cleaning, AC, plumbing..." autocomplete="off">
+          <span class="search-icon">🔍</span>
+          <div id="search-suggestions" class="search-suggestions-dropdown"></div>
+        </div>
+
+        <nav class="header-nav">
+          <a href="#services" onclick="showHomeView()">Services</a>
+          <a href="#why-choose-us" onclick="showHomeView()">Why Us</a>
+          <a href="#reviews" onclick="showHomeView()">Reviews</a>
+          <a href="#admin" class="btn-admin-nav" title="Admin Portal">🔒 Admin</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Website Section -->
+  <main id="main-landing">
+
+    <!-- Hero Section with Marketplace Hub -->
+    <section class="hero-section">
+      <div class="hero-bg-overlay"></div>
+      <div class="hero-content">
+        <span class="hero-tagline">🔥 All Home Services Under One Roof</span>
+        <h2 class="hero-title">Professional Home & Commercial Maintenance</h2>
+        <p class="hero-subtitle">S A Raichur Service Point - Trusted, Affordable & Expert Doorstep Services in Raichur</p>
+        
+        <!-- Large Central Search -->
+        <div class="hero-search-container">
+          <div class="hero-search-wrapper">
+            <span class="hero-search-icon">🔍</span>
+            <input type="text" id="hero-search" placeholder="What service are you looking for today?" autocomplete="off">
+          </div>
+        </div>
+
+        <!-- Quick Category nav bubbles -->
+        <div class="quick-nav-wrapper">
+          <p>Or jump to a service category:</p>
+          <div class="quick-nav-list" id="quick-categories-nav">
+            <!-- Rendered dynamically by app.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Service Categories Section -->
+    <section class="section categories-section" id="services">
+      <div class="container">
+        <div class="section-header">
+          <h3 class="section-title">Browse Our Services</h3>
+          <p class="section-subtitle">Select a category to view individual rates and schedule expert bookings.</p>
+        </div>
+        <div class="categories-grid" id="categories-grid">
+          <!-- Rendered dynamically by app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Choose Us Bento Section -->
+    <section class="section why-section" id="why-choose-us">
+      <div class="container">
+        <div class="section-header">
+          <h3 class="section-title">Why Choose S A Raichur Service Point?</h3>
+          <p class="section-subtitle">We bring transparency, quality equipment, and expert technicians directly to your doorstep.</p>
+        </div>
+        
+        <div class="why-bento-grid">
+          <div class="bento-card bento-wide">
+            <div class="bento-icon">💪</div>
+            <div class="bento-content">
+              <h4>Trained & Experienced Team</h4>
+              <p>Our specialists are background-verified, extensively trained, and carry years of experience in residential, office, and large-scale industrial deep cleaning.</p>
+            </div>
+          </div>
+          
+          <div class="bento-card">
+            <div class="bento-icon">🛡️</div>
+            <div class="bento-content">
+              <h4>Hygienic Products</h4>
+              <p>We use eco-friendly, non-toxic, and sanitizing cleaning products safe for kids, elderly, and pets.</p>
+            </div>
+          </div>
+
+          <div class="bento-card">
+            <div class="bento-icon">⚙️</div>
+            <div class="bento-content">
+              <h4>Professional Equipment</h4>
+              <p>Equipped with heavy-duty industrial vacuum cleaners, single-disc floor scrubbers, and high-pressure jet pumps.</p>
+            </div>
+          </div>
+
+          <div class="bento-card bento-wide">
+            <div class="bento-icon">🏷️</div>
+            <div class="bento-content">
+              <h4>Affordable & Transparent Pricing</h4>
+              <p>No hidden charges or surprise extras. View the upfront rates, approve quotes, and enjoy high-standard service matching your exact budget.</p>
+            </div>
+          </div>
+
+          <div class="bento-card">
+            <div class="bento-icon">⏱️</div>
+            <div class="bento-content">
+              <h4>On-Time Service</h4>
+              <p>Punctuality is our core promise. We respect your schedule and arrive fully equipped at the chosen time slot.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Popular Services (Featured Items) -->
+    <section class="section featured-section">
+      <div class="container">
+        <div class="section-header">
+          <h3 class="section-title">Popular & Trending Services</h3>
+          <p class="section-subtitle">Most requested home services by households and offices in Raichur this week.</p>
+        </div>
+        <div class="featured-grid" id="featured-grid">
+          <!-- Rendered dynamically by app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials / Customer Reviews -->
+    <section class="section reviews-section" id="reviews">
+      <div class="container">
+        <div class="section-header">
+          <h3 class="section-title">What Our Customers Say</h3>
+          <p class="section-subtitle">Real reviews from homeowners, business managers, and retail partners in Raichur.</p>
+        </div>
+        
+        <div class="reviews-slider">
+          <div class="review-card">
+            <div class="review-header">
+              <div class="review-avatar">VR</div>
+              <div>
+                <h5>Vijay Raj</h5>
+                <span class="review-stars">★★★★★</span>
+              </div>
+            </div>
+            <p>"Got our entire home deep cleaned before a family function. The team spent 5 hours and cleaned every corner, especially the bathroom tiles and kitchen grease. Highly recommended!"</p>
+            <span class="review-date">Raichur • 2 days ago</span>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <div class="review-avatar">AM</div>
+              <div>
+                <h5>Ananya M.</h5>
+                <span class="review-stars">★★★★★</span>
+              </div>
+            </div>
+            <p>"Excellent AC repair and cleaning service. The technician explained the gas levels and serviced the indoor filter thoroughly with zero mess. Very affordable compared to other platforms."</p>
+            <span class="review-date">Sia Hills, Raichur • 1 week ago</span>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <div class="review-avatar">KS</div>
+              <div>
+                <h5>Kiran S.</h5>
+                <span class="review-stars">★★★★★</span>
+              </div>
+            </div>
+            <p>"Cleaned my 2000L underground water tank and sump. They used high-pressure water jets and vacuumed all mud slurry. The water looks perfectly crystal clear now. Professional team."</p>
+            <span class="review-date">LVD College Road • 3 weeks ago</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trust Stats Banner -->
+    <section class="stats-banner">
+      <div class="stats-container">
+        <div class="stat-item">
+          <h4>5,000+</h4>
+          <p>Happy Customers</p>
+        </div>
+        <div class="stat-item">
+          <h4>50+</h4>
+          <p>Trained Technicians</p>
+        </div>
+        <div class="stat-item">
+          <h4>25+</h4>
+          <p>Home Services</p>
+        </div>
+        <div class="stat-item">
+          <h4>4.8★</h4>
+          <p>Average Rating</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Admin Dashboard Section (Hidden by default, triggered via #admin hash) -->
+  <main id="admin-panel" style="display: none;">
+    <div class="admin-container">
+      <div class="admin-header">
+        <div class="admin-title-row">
+          <button class="btn btn-secondary btn-sm" onclick="showHomeViewFromAdmin()">← Back to Site</button>
+          <h2>Admin Control Panel</h2>
+        </div>
+        <span class="admin-subtitle">S A Raichur Service Point Booking Management</span>
+      </div>
+
+      <!-- Login Screen -->
+      <div id="admin-auth-box" class="admin-card text-center" style="display: none;">
+        <div class="admin-auth-icon">🔒</div>
+        <h3>Admin Authentication</h3>
+        <p>Please enter the dashboard password to access customer lists and enquiries.</p>
+        <div class="admin-input-group">
+          <input type="password" id="admin-pass-input" placeholder="Enter Admin Password">
+          <button class="btn btn-primary" id="admin-login-btn">Unlock Dashboard</button>
+        </div>
+      </div>
+
+      <!-- Main Dashboard Content -->
+      <div id="admin-dashboard-box" style="display: none;">
+        <div class="admin-filter-bar">
+          <div class="filter-group">
+            <label for="admin-filter-status">Filter Status:</label>
+            <select id="admin-filter-status" onchange="triggerAdminFilter()">
+              <option value="all">All Bookings</option>
+              <option value="Pending">Pending</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <div class="filter-group filter-search-group">
+            <label for="admin-search-input">Search Bookings:</label>
+            <input type="text" id="admin-search-input" placeholder="Search by name, ID, service, phone..." oninput="triggerAdminFilter()">
+          </div>
+
+          <button class="btn btn-outline btn-sm btn-logout" onclick="adminLogout()">Log Out</button>
+        </div>
+
+        <div class="admin-card admin-table-card">
+          <div id="admin-loader" class="text-center py-4">
+            <span class="loading-spinner"></span> Loading database entries...
+          </div>
+          
+          <table id="admin-bookings-table" class="admin-table" style="display: none;">
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Customer</th>
+                <th>Requested Services</th>
+                <th>Date & Slot</th>
+                <th>Address</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-bookings-rows">
+              <!-- Rendered dynamically by app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Section -->
+  <footer class="main-footer">
+    <div class="container footer-grid">
+      <div class="footer-info">
+        <h4 class="footer-logo-title">S A RAICHUR SERVICE POINT</h4>
+        <p class="footer-desc">Professional cleaning and home maintenance platform for Raichur. Experience the highest standard of service under one roof.</p>
+        <p class="footer-tagline">“All Home Services Under One Roof”</p>
+      </div>
+
+      <div class="footer-links">
+        <h5>Our Services</h5>
+        <ul>
+          <li><a href="#" onclick="showCategoryView('cleaning')">Cleaning Services</a></li>
+          <li><a href="#" onclick="showCategoryView('maintenance')">Home Maintenance</a></li>
+          <li><a href="#" onclick="showCategoryView('others')">Other Local Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-contact">
+        <h5>Contact Details</h5>
+        <p>📍 Raichur, Karnataka, India</p>
+        <p>📱 <a href="tel:7411741418">7411741418</a> | <a href="tel:8867647591">8867647591</a></p>
+        <p>🌐 <a href="http://saraichurservicepoint.com" target="_blank">saraichurservicepoint.com</a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container footer-bottom-flex">
+        <span>&copy; 2026 S A Raichur Service Point. All rights reserved.</span>
+        <span>Developed by Antigravity AI • <a href="#admin" onclick="showAdminView()">Admin Login</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- DYNAMIC MODALS & OVERLAYS -->
+
+  <!-- Urban Company Style Category Detail View Overlay -->
+  <div id="category-view-overlay" class="category-view-overlay">
+    <div class="category-view-container">
+      
+      <!-- Top header bar -->
+      <div class="category-view-header">
+        <div class="cat-header-left">
+          <button class="btn-back" id="close-category-view">←</button>
+          <div>
+            <h3 id="category-view-title">Category Title</h3>
+            <p id="category-view-desc">Description of this category goes here</p>
+          </div>
+        </div>
+        <div class="cat-header-right">
+          <span class="rating-badge">★ 4.8 Rating</span>
+        </div>
+      </div>
+
+      <!-- Split Layout: Navigation Sidebar + Service Items Row -->
+      <div class="category-view-body">
+        <aside class="category-sidebar" id="category-sidebar">
+          <!-- Rendered dynamically by app.js -->
+        </aside>
+        
+        <main class="category-services-list" id="category-services-list">
+          <!-- Rendered dynamically by app.js -->
+        </main>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Persistent Bottom Cart Bar (Appears when items are added) -->
+  <div id="bottom-cart-bar" class="bottom-cart-bar">
+    <div class="cart-bar-container">
+      <div id="cart-bar-summary" class="cart-bar-summary">
+        <!-- Filled dynamically -->
+      </div>
+      <button class="btn btn-accent" id="view-cart-btn">View Cart & Proceed →</button>
+    </div>
+  </div>
+
+  <!-- Sliding Checkout Cart Drawer -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-drawer-header">
+      <h3>Review Booking Services</h3>
+      <button class="btn-close-drawer" id="close-cart-btn">✕</button>
+    </div>
+
+    <div class="cart-drawer-body">
+      <!-- Added Services List -->
+      <div class="checkout-card">
+        <h4>Selected Services</h4>
+        <div id="checkout-items-list">
+          <!-- Rendered dynamically by app.js -->
+        </div>
+      </div>
+
+      <form id="booking-form">
+        <!-- Date & Time Slot -->
+        <div class="checkout-card">
+          <h4>Schedule Appointment</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="booking-date">Select Date *</label>
+              <input type="date" id="booking-date" required>
+            </div>
+            <div class="form-group">
+              <label for="booking-time">Time Slot *</label>
+              <select id="booking-time" required>
+                <option value="" disabled selected>Choose a slot</option>
+                <option value="Morning (08:00 AM - 11:00 AM)">Morning (08:00 AM - 11:00 AM)</option>
+                <option value="Midday (11:00 AM - 02:00 PM)">Midday (11:00 AM - 02:00 PM)</option>
+                <option value="Afternoon (02:00 PM - 05:00 PM)">Afternoon (02:00 PM - 05:00 PM)</option>
+                <option value="Evening (05:00 PM - 08:00 PM)">Evening (05:00 PM - 08:00 PM)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer Address & Contact Info -->
+        <div class="checkout-card">
+          <h4>Contact & Location Details</h4>
+          <div class="form-group">
+            <label for="booking-name">Full Name *</label>
+            <input type="text" id="booking-name" placeholder="E.g. Rajesh Kumar" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="booking-phone">Mobile Number *</label>
+              <input type="tel" id="booking-phone" placeholder="10-digit number" pattern="[6-9][0-9]{9}" required>
+            </div>
+            <div class="form-group">
+              <label for="booking-email">Email (Optional)</label>
+              <input type="email" id="booking-email" placeholder="E.g. rajesh@gmail.com">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="booking-address">Service Address in Raichur *</label>
+            <textarea id="booking-address" rows="3" placeholder="House number, building name, landmark, colony, Raichur" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="booking-notes">Special Instructions (Optional)</label>
+            <textarea id="booking-notes" rows="2" placeholder="Any specific instructions for cleaner, parking details, etc."></textarea>
+          </div>
+        </div>
+
+        <!-- Cost breakdown -->
+        <div class="checkout-card bill-details-card">
+          <h4>Bill Details</h4>
+          <div class="bill-row">
+            <span>Items Subtotal</span>
+            <span id="checkout-subtotal">₹0</span>
+          </div>
+          <div class="bill-row">
+            <span>Safety & Service Tax (5% GST)</span>
+            <span id="checkout-tax">₹0</span>
+          </div>
+          <div class="bill-row bill-grand-total">
+            <span>Grand Total</span>
+            <span id="checkout-total">₹0</span>
+          </div>
+          <p class="bill-tax-note">💳 Cash/UPI payment after service completion.</p>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block py-3 mt-3" id="checkout-submit-btn">
+          Confirm Service Booking
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Booking Success Modal -->
+  <div class="modal-overlay" id="success-modal">
+    <div class="success-modal-card">
+      <div id="success-modal-details">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+      <div class="success-modal-actions">
+        <a href="#" id="success-whatsapp-btn" target="_blank" class="btn btn-whatsapp-direct">
+          🟢 Share Booking on WhatsApp
+        </a>
+        <button class="btn btn-secondary btn-block mt-3" onclick="closeSuccessModal()">
+          Close & Back to Services
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

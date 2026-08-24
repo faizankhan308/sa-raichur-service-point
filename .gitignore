@@ -1,0 +1,33 @@
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Build outputs
+/client/dist
+/dist
+.tmp/
+
+# Environment configurations
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Local Mock Database files
+/server/data/bookings_atlas_mock.json
+/server/data/services_mock.json
+/server/data/admins_mock.json
+
+# Debug log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.system_generated/
+*.log
+
+# OS Metadata
+.DS_Store
+Thumbs.db

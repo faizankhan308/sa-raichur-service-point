@@ -1,0 +1,24 @@
+[
+  {
+    "id": "SABK-MT5UPFBGVKYT",
+    "customerName": "Browser Subagent Test",
+    "phone": "9876543210",
+    "email": "subagent@test.com",
+    "address": "123 Fort Road, Near Station, Raichur",
+    "date": "260901-02-20",
+    "timeSlot": "Morning (08:00 AM - 11:00 AM)",
+    "services": [
+      {
+        "id": "home-deep",
+        "name": "Home Deep Cleaning",
+        "price": 1999,
+        "quantity": 1
+      }
+    ],
+    "totalAmount": 2099,
+    "status": "Confirmed",
+    "createdAt": "2026-08-23T13:36:43.468Z",
+    "notes": "Subagent automated testing",
+    "updatedAt": "2026-08-23T13:37:53.157Z"
+  }
+]
