@@ -4,7 +4,7 @@
   "description": "Full stack home services marketplace for S A Raichur Service Point",
   "main": "server/server.js",
   "scripts": {
-    "install-all": "npm install && npm install --prefix server && npm install --prefix client",
+    "install-all": "npm install && npm install --prefix server && npm install --production=false --prefix client",
     "server": "npm start --prefix server",
     "client": "npm run dev --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
