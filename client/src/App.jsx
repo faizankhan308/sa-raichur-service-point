@@ -6,6 +6,7 @@ import { selectAuth } from './redux/authSlice';
 // Global layout components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 
 // Pages
 import Home from './pages/Home';
@@ -27,6 +28,7 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <div className="flex flex-col min-h-screen bg-slate-50">
         <Navbar />
         <main className="flex-grow">

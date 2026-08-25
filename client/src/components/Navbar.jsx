@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Search, ShoppingCart, User, MapPin, Menu, X, LogOut, ChevronDown, Bell, HelpCircle } from 'lucide-react';
+import { Search, ShoppingCart, User, MapPin, Menu, X, LogOut, ChevronDown, Bell, HelpCircle, Lock } from 'lucide-react';
 import { selectCartCount } from '../redux/cartSlice';
 import { selectAuth, logout } from '../redux/authSlice';
 import { selectBookings, fetchBookingsSuccess } from '../redux/bookingSlice';
@@ -266,6 +266,16 @@ const Navbar = () => {
             </Link>
           )}
 
+
+          {/* Admin Lock Access point (Subtle, visually separate) */}
+          <Link
+            to={isAuthenticated ? "/admin" : "/login"}
+            className="hidden sm:flex items-center justify-center h-10 w-10 text-slate-700 hover:text-slate-900 border border-slate-200/80 bg-white hover:bg-slate-50 transition-all rounded-full shadow-sm hover:scale-105"
+            title={isAuthenticated ? "Admin Dashboard" : "Admin Login"}
+          >
+            <Lock className="h-4 w-4 text-slate-500" />
+          </Link>
+
           {/* User Profile dropdown */}
           <div className="relative" ref={profileRef}>
             <button
@@ -367,6 +377,30 @@ const Navbar = () => {
             <Link to="/services?category=maintenance" onClick={() => setMobileMenuOpen(false)} className="hover:text-slate-950 hover:bg-slate-50 px-3 py-2 rounded-lg transition-all">Maintenance</Link>
             <Link to="/my-bookings" onClick={() => setMobileMenuOpen(false)} className="text-accent hover:bg-accent-light px-3 py-2 rounded-lg transition-all font-extrabold">Track Booking</Link>
             
+            <a
+              href="https://www.instagram.com/sa_raichur_serives_point?igsi=Y2ZjdGkwdzkyMjV2"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileMenuOpen(false)}
+              className="hover:text-slate-950 hover:bg-slate-50 px-3 py-2 rounded-lg transition-all flex items-center gap-2"
+            >
+              <svg className="h-4 w-4 text-pink-600" stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+              </svg> Follow Instagram
+            </a>
+
+            {!isAuthenticated && (
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="hover:text-slate-950 hover:bg-slate-50 px-3 py-2 rounded-lg transition-all flex items-center gap-2"
+              >
+                <Lock className="h-4 w-4 text-slate-500" /> Admin Area
+              </Link>
+            )}
+
             <hr className="border-slate-100 my-1" />
 
             {isAuthenticated ? (

@@ -595,8 +595,8 @@ const ServiceDetails = () => {
           )}
         </div>
 
-        {/* Right Column: Sticky Pricing Summary Box */}
-        <div className="lg:col-span-5 lg:sticky lg:top-24">
+        {/* Right Column: Pricing Summary Box */}
+        <div className="lg:col-span-5">
           <div className="bg-white rounded-3xl border border-slate-200/60 shadow-sm p-6 space-y-6">
             
             <div className="space-y-2">

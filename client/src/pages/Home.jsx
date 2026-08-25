@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Star, ShieldCheck, Sparkles, Wrench, Settings, ChevronRight, Phone, MessageSquare, Plus, Minus, Search, MapPin, Award, CheckCircle2, ChevronDown, Users, Clock, ShieldAlert } from 'lucide-react';
+import { Star, ShieldCheck, Sparkles, Wrench, Settings, ChevronRight, Phone, MessageSquare, Plus, Minus, Search, MapPin, Award, CheckCircle2, ChevronDown, Users, Clock, ShieldAlert, Lock } from 'lucide-react';
 import { fetchServices, fetchReviews, submitReview, fetchGoogleReviews } from '../services/api';
 import { services as fallbackServices, getOrderedServices } from '../data/services';
 import { spotlightBanners, noteworthyBanners } from '../data/spotlight';
@@ -10,6 +10,7 @@ import { addToCart, removeFromCart, selectCartItems } from '../redux/cartSlice';
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const videoRef = useRef(null);
 
   const [servicesList, setServicesList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,6 +18,8 @@ const Home = () => {
   const [heroSuggestions, setHeroSuggestions] = useState([]);
   const [showHeroSuggestions, setShowHeroSuggestions] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   // Dynamic Customer Reviews State
   const [reviewsList, setReviewsList] = useState([]);
@@ -79,6 +82,20 @@ const Home = () => {
   useEffect(() => {
     loadReviewsData();
     loadGoogleReviewsData();
+  }, []);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+    const handler = (e) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
+
+  useEffect(() => {
+    if (videoRef.current && videoRef.current.readyState >= 3) {
+      setVideoLoaded(true);
+    }
   }, []);
 
   const handleReviewSubmit = async (e) => {
@@ -210,6 +227,13 @@ const Home = () => {
     navigate(`/services?category=${cat}`);
   };
 
+  const scrollToBookingFlow = () => {
+    const target = document.getElementById('what-service-do-you-need') || document.getElementById('our-services');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   const handleAdd = (service) => {
     dispatch(addToCart(service));
   };
@@ -308,90 +332,236 @@ const Home = () => {
   return (
     <div className="flex flex-col bg-slate-50 min-h-screen">
       
-      {/* 1. Sleek Hero Search Banner (Urban Company style overlay) */}
-      <section className="bg-slate-900 text-white py-16 sm:py-20 relative overflow-hidden">
-        {/* Radial lights */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,163,196,0.15),transparent_40%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(0,82,204,0.12),transparent_45%)]" />
-        
-        <div className="max-w-4xl mx-auto px-4 text-center relative z-10 space-y-5">
-          <div className="space-y-3">
-            <span className="inline-block bg-white/10 backdrop-blur-md border border-white/15 text-accent text-[9px] sm:text-[10px] font-black px-4.5 py-1 rounded-full uppercase tracking-wider select-none">
-              Raichur's Professional Service Network
-            </span>
-            <h1 className="font-display text-2xl sm:text-3xl font-black text-accent tracking-wide uppercase">
-              S A Raichur Service Point
-            </h1>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight max-w-2xl mx-auto">
-              “Clean Homes. Trusted Service. Happy Customers.”
-            </h2>
-            <div className="text-slate-350 text-xs sm:text-sm font-semibold max-w-lg mx-auto space-y-1">
-              <p className="font-black text-white text-base">All Services Under One Roof</p>
-              <p>We provide professional services across Raichur.</p>
+      {/* 1. Sleek Hero Section (Full-Width Background Video) */}
+      <section className="relative overflow-hidden bg-slate-950 text-white py-16 lg:py-24">
+        {prefersReducedMotion ? (
+          <>
+            {/* Blurred background image layer */}
+            <img 
+              src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80" 
+              alt="S A Raichur Service Point Background Blur Fallback" 
+              className="absolute inset-0 w-full h-full object-cover scale-110 blur-xl opacity-30"
+            />
+            {/* Dark overlay */}
+            <div className="absolute inset-0 bg-slate-950/50" />
+            {/* Main full image */}
+            <img 
+              src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80" 
+              alt="S A Raichur Service Point Background Fallback" 
+              className="absolute inset-0 w-full h-full object-contain"
+            />
+          </>
+        ) : (
+          <>
+            {/* Blurred background video layer */}
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              className={`absolute inset-0 w-full h-full object-cover scale-110 blur-xl transition-opacity duration-700 ${
+                videoLoaded ? "opacity-50" : "opacity-0"
+              }`}
+            >
+              <source src="/video/hero-cleaning.mp4" type="video/mp4" />
+            </video>
+
+            {/* Dark overlay */}
+            <div className="absolute inset-0 bg-slate-950/50" />
+
+            {/* Main full video */}
+            <video
+              ref={videoRef}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              onCanPlay={() => setVideoLoaded(true)}
+              className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ${
+                videoLoaded ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <source src="/video/hero-cleaning.mp4" type="video/mp4" />
+            </video>
+          </>
+        )}
+
+        {/* Readability overlay for Hero content */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/50 to-transparent z-0"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-3xl space-y-7 sm:space-y-8 text-left">
+            
+            {/* Logo & Business Name Row */}
+            <div className="flex items-center gap-3">
+              <img 
+                src="/logo.jpg" 
+                alt="S A Raichur Service Point Official Logo" 
+                className="h-14 w-14 rounded-full object-contain border border-[#d4af37]/35 shadow-md bg-[#0c1938]"
+              />
+              <div className="flex flex-col">
+                <span className="text-[10px] font-extrabold text-[#d4af37] uppercase tracking-widest leading-none">Official Identity</span>
+                <h1 className="font-display text-base sm:text-lg font-black text-accent tracking-wide uppercase mt-1 leading-none">
+                  S A Raichur Service Point
+                </h1>
+              </div>
             </div>
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 px-5 py-2 rounded-full mt-2">
-              <Phone className="h-4 w-4 text-accent animate-pulse" />
-              <span className="text-xs sm:text-sm font-extrabold text-white">
-                Call/WhatsApp: <a href="tel:7411741418" className="hover:text-accent underline">7411741418</a> | <a href="tel:8867647591" className="hover:text-accent underline">8867647591</a>
+
+            {/* Main Heading & Supporting Text */}
+            <div className="space-y-3">
+              <span className="inline-block bg-white/10 backdrop-blur-md border border-white/15 text-accent text-[9px] sm:text-[10px] font-black px-4.5 py-1 rounded-full uppercase tracking-wider select-none">
+                Raichur's Professional Service Network
               </span>
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight max-w-2xl">
+                Your Trusted Partner for Every Home Service
+              </h2>
+              <p className="text-slate-200 text-xs sm:text-sm font-semibold max-w-xl leading-relaxed">
+                Professional Cleaning, Maintenance & Home Services at Your Doorstep.
+              </p>
             </div>
-          </div>
 
-          {/* Search box overlay */}
-          <div className="max-w-xl mx-auto" ref={heroSearchRef}>
-            <form onSubmit={handleHeroSearchSubmit} className="flex flex-col sm:flex-row gap-2 bg-white p-2 rounded-2xl sm:rounded-xl shadow-2xl border border-white/10 text-slate-800">
-              
-              {/* Location indicator */}
-              <div className="flex items-center gap-2 px-3 py-2 border-b sm:border-b-0 sm:border-r border-slate-100 shrink-0">
-                <MapPin className="h-4 w-4 text-accent" />
-                <span className="text-xs font-bold text-slate-700 whitespace-nowrap">Raichur, Karnataka</span>
-              </div>
+            {/* Primary Customer Actions */}
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={scrollToBookingFlow}
+                className="bg-accent hover:bg-accent-hover text-white text-xs font-black h-11 px-6 rounded-xl shadow-lg transition-all duration-200 active:scale-95 cursor-pointer"
+              >
+                Book a Service
+              </button>
+              <a
+                href="tel:7411741418"
+                className="bg-white/10 hover:bg-white/15 text-white text-xs font-black h-11 px-5 rounded-xl border border-white/15 transition-all flex items-center gap-1.5"
+              >
+                <Phone className="h-4 w-4 text-accent animate-pulse" />
+                <span>Call Now</span>
+              </a>
+              <a
+                href="https://wa.me/917411741418"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black h-11 px-5 rounded-xl transition-all flex items-center gap-1.5"
+              >
+                <MessageSquare className="h-4 w-4" />
+                <span>WhatsApp Us</span>
+              </a>
+            </div>
 
-              {/* Input text */}
-              <div className="relative flex-1">
-                <input 
-                  type="text"
-                  value={heroSearchQuery}
-                  onChange={(e) => {
-                    setHeroSearchQuery(e.target.value);
-                    setShowHeroSuggestions(true);
-                  }}
-                  onFocus={() => setShowHeroSuggestions(true)}
-                  placeholder="Search for deep cleaning, AC repair, plumbing..."
-                  className="w-full bg-transparent px-3 py-2.5 text-xs font-semibold text-slate-800 placeholder-slate-450 focus:outline-none"
-                />
-                <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+            {/* Search box overlay */}
+            <div className="max-w-xl" ref={heroSearchRef}>
+              <form onSubmit={handleHeroSearchSubmit} className="flex flex-col sm:flex-row gap-2 bg-white p-2 rounded-2xl sm:rounded-xl shadow-2xl border border-white/10 text-slate-800">
+                
+                {/* Location indicator */}
+                <div className="flex items-center gap-2 px-3 py-2 border-b sm:border-b-0 sm:border-r border-slate-100 shrink-0">
+                  <MapPin className="h-4 w-4 text-accent" />
+                  <span className="text-xs font-bold text-slate-700 whitespace-nowrap">Raichur, Karnataka</span>
+                </div>
 
-                {/* Autocomplete list */}
-                {showHeroSuggestions && heroSuggestions.length > 0 && (
-                  <div className="absolute top-12 left-0 right-0 bg-white border border-slate-100 rounded-2xl shadow-2xl z-50 text-left overflow-hidden py-1">
-                    {heroSuggestions.map(service => (
-                      <div
-                        key={service.id}
-                        onClick={() => {
-                          setShowHeroSuggestions(false);
-                          setHeroSearchQuery('');
-                          navigate(`/service/${service.id}`);
-                        }}
-                        className="px-4 py-3 hover:bg-slate-50 cursor-pointer flex items-center justify-between transition-colors border-b border-slate-50 last:border-0"
-                      >
-                        <div>
-                          <div className="text-xs font-bold text-slate-800">{service.name}</div>
-                          <div className="text-[10px] text-slate-400 capitalize mt-0.5">{service.category} • Starts at ₹{service.price}</div>
+                {/* Input text */}
+                <div className="relative flex-1">
+                  <input 
+                    type="text"
+                    value={heroSearchQuery}
+                    onChange={(e) => {
+                      setHeroSearchQuery(e.target.value);
+                      setShowHeroSuggestions(true);
+                    }}
+                    onFocus={() => setShowHeroSuggestions(true)}
+                    placeholder="Search for deep cleaning, AC repair, plumbing..."
+                    className="w-full bg-transparent px-3 py-2.5 text-xs font-semibold text-slate-800 placeholder-slate-450 focus:outline-none"
+                  />
+                  <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+
+                  {/* Autocomplete list */}
+                  {showHeroSuggestions && heroSuggestions.length > 0 && (
+                    <div className="absolute top-12 left-0 right-0 bg-white border border-slate-100 rounded-2xl shadow-2xl z-50 text-left overflow-hidden py-1">
+                      {heroSuggestions.map(service => (
+                        <div
+                          key={service.id}
+                          onClick={() => {
+                            setShowHeroSuggestions(false);
+                            setHeroSearchQuery('');
+                            navigate(`/service/${service.id}`);
+                          }}
+                          className="px-4 py-3 hover:bg-slate-50 cursor-pointer flex items-center justify-between transition-colors border-b border-slate-50 last:border-0"
+                        >
+                          <div>
+                            <div className="text-xs font-bold text-slate-800">{service.name}</div>
+                            <div className="text-[10px] text-slate-400 capitalize mt-0.5">{service.category} • Starts at ₹{service.price}</div>
+                          </div>
+                          <ChevronRight className="h-3 w-3 text-slate-350" />
                         </div>
-                        <ChevronRight className="h-3 w-3 text-slate-350" />
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </form>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </form>
+            </div>
+
           </div>
         </div>
       </section>
 
+      {/* Quick Contact Strip */}
+      <section className="bg-white border-y border-slate-200/80 py-5 relative z-30 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-center gap-6 md:gap-12">
+          
+          {/* Call Link */}
+          <a
+            href="tel:7411741418"
+            className="flex items-center gap-2.5 text-xs sm:text-sm font-black text-slate-800 hover:text-accent transition-colors"
+          >
+            <div className="h-8 w-8 bg-slate-900/5 rounded-full flex items-center justify-center text-slate-905">
+              <Phone className="h-4 w-4 text-accent" />
+            </div>
+            <div className="flex flex-col text-left">
+              <span className="text-[9px] text-slate-400 font-extrabold uppercase leading-none">Call Support</span>
+              <span className="mt-1">074117 41418</span>
+            </div>
+          </a>
+
+          {/* WhatsApp Link */}
+          <a
+            href="https://wa.me/917411741418"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2.5 text-xs sm:text-sm font-black text-slate-800 hover:text-emerald-600 transition-colors"
+          >
+            <div className="h-8 w-8 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-650">
+              <MessageSquare className="h-4 w-4 text-emerald-500" />
+            </div>
+            <div className="flex flex-col text-left">
+              <span className="text-[9px] text-slate-400 font-extrabold uppercase leading-none">WhatsApp Chat</span>
+              <span className="mt-1">Connect Instantly</span>
+            </div>
+          </a>
+
+          {/* Instagram Link */}
+          <a
+            href="https://www.instagram.com/sa_raichur_serives_point?igsi=Y2ZjdGkwdzkyMjV2"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2.5 text-xs sm:text-sm font-black text-slate-800 hover:text-pink-600 transition-colors"
+          >
+            <div className="h-8 w-8 bg-pink-50 rounded-full flex items-center justify-center text-pink-650">
+              <svg className="h-4 w-4 text-pink-600" stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+              </svg>
+            </div>
+            <div className="flex flex-col text-left">
+              <span className="text-[9px] text-slate-400 font-extrabold uppercase leading-none">Follow Us</span>
+              <span className="mt-1">Official Instagram</span>
+            </div>
+          </a>
+
+        </div>
+      </section>
+
       {/* 2. App-Style Categories Panel (Urban Company Icon Grid) */}
-      <section className="bg-white py-12 border-b border-slate-200/50 relative z-20 -mt-6 rounded-t-3xl max-w-7xl mx-auto shadow-sm">
+      <section id="what-service-do-you-need" className="bg-white py-12 border-b border-slate-200/50 relative z-20 mt-0 max-w-7xl mx-auto shadow-sm">
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-xs mx-auto mb-8 sm:mb-10">
             <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1">Doorstep Booking</span>
