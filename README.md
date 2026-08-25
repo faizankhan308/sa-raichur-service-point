@@ -71,8 +71,7 @@ A premium, production-quality service marketplace web application for **S A Raic
 
 3. **Log in to Admin Dashboard**:
    * Visit: [http://localhost:5173/login](http://localhost:5173/login) (or click the lock icon in the top right).
-   * Default Username: `admin`
-   * Default Password: `adminpassword123`
+   * Note: The first login attempt will dynamically register the administrator credentials of your choice in the database.
 
 ---
 

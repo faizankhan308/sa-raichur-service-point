@@ -74,8 +74,10 @@ const ServiceCard = ({ service }) => {
           <div className="flex flex-col">
             <span className="text-slate-400 text-[9px] font-extrabold uppercase leading-none mb-1">Starts at</span>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-base font-black text-slate-900">₹{service.price}</span>
-              {service.originalPrice && (
+              <span className="text-base font-black text-slate-900">
+                {service.price > 0 ? `₹${service.price}` : "Contact for Quote"}
+              </span>
+              {service.originalPrice > 0 && (
                 <span className="text-[10px] text-slate-400 line-through">₹{service.originalPrice}</span>
               )}
             </div>

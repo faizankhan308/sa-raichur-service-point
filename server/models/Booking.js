@@ -26,7 +26,8 @@ const bookingSchema = new mongoose.Schema({
       id: String,
       name: String,
       price: Number,
-      quantity: Number
+      quantity: Number,
+      selectedOptions: mongoose.Schema.Types.Mixed
     }
   ],
   address: {

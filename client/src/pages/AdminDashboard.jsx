@@ -455,9 +455,32 @@ const AdminDashboard = () => {
                         </td>
 
                         {/* Services and amounts */}
-                        <td className="px-6 py-4 max-w-[200px]">
-                          <div className="font-semibold text-slate-800 line-clamp-1">{bk.service}</div>
-                          <div className="text-primary font-black mt-1">₹{bk.totalAmount}</div>
+                        <td className="px-6 py-4 max-w-[250px]">
+                          <div className="font-bold text-slate-800 line-clamp-1 mb-1" title={bk.service}>{bk.service}</div>
+                          {bk.services && bk.services.length > 0 && (
+                            <div className="space-y-1 border-t border-slate-100 pt-1.5 mt-1 text-[10px] text-slate-500">
+                              {bk.services.map((item, idx) => (
+                                <div key={idx} className="bg-slate-50 rounded p-1.5 border border-slate-100/50">
+                                  <div className="font-bold text-slate-700">
+                                    {item.name} <span className="text-slate-400 font-medium">(x{item.quantity})</span>
+                                  </div>
+                                  {item.selectedOptions && Object.keys(item.selectedOptions).length > 0 && (
+                                    <div className="mt-0.5 text-slate-500 font-medium font-sans">
+                                      {Object.entries(item.selectedOptions).map(([key, val]) => val && (
+                                        <div key={key}>• {key}: {val}</div>
+                                      ))}
+                                    </div>
+                                  )}
+                                  <div className="text-slate-400 mt-0.5 font-bold">
+                                    {item.price > 0 ? `₹${item.price}` : "Quote on Call"}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          <div className="text-primary font-black mt-1 text-[11px]">
+                            Total: ₹{bk.totalAmount}
+                          </div>
                         </td>
 
                         {/* Address details */}

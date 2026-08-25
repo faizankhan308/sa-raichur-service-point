@@ -24,7 +24,7 @@ export const spotlightBanners = [
     desc: 'German suction extraction to remove deep allergens and dirt.',
     btnText: 'See Cleaning Services',
     category: 'cleaning',
-    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80'
+    image: '/sofa-cleaning.jpg'
   }
 ];
 
@@ -34,28 +34,28 @@ export const noteworthyBanners = [
     title: 'Floor Scrubbing & Polishing',
     category: 'cleaning',
     tag: 'New Launch',
-    image: 'https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=300&q=80'
+    image: '/floor-scrubbing.jpg'
   },
   {
     id: 'note-2',
     title: 'Professional Packers & Movers',
     category: 'others',
     tag: 'Relocation',
-    image: 'https://images.unsplash.com/photo-1580674684081-7617fbf3d745?auto=format&fit=crop&w=300&q=80'
+    image: '/packers-movers.jpg'
   },
   {
     id: 'note-3',
     title: 'Eco Solar Panel Wash',
     category: 'others',
     tag: 'Eco Friendly',
-    image: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=300&q=80'
+    image: '/solar-panel.jpg'
   },
   {
     id: 'note-4',
     title: 'Kitchen Chimney Chemical Degreasing',
     category: 'cleaning',
     tag: 'Essential',
-    image: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=300&q=80'
+    image: '/kitchen-chimney.jpg'
   },
   {
     id: 'note-5',

@@ -24,12 +24,25 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addToCart: (state, action) => {
-      const { id, name, price, category } = action.payload;
+      const { id, name, price, category, selectedOptions } = action.payload;
       const existing = state.items.find(item => item.id === id);
       if (existing) {
         existing.quantity += 1;
+        if (selectedOptions !== undefined) {
+          existing.selectedOptions = selectedOptions;
+        }
+        if (price !== undefined) {
+          existing.price = price;
+        }
       } else {
-        state.items.push({ id, name, price, category, quantity: 1 });
+        state.items.push({ 
+          id, 
+          name, 
+          price: price !== undefined ? price : 0, 
+          category, 
+          quantity: 1, 
+          selectedOptions: selectedOptions || null 
+        });
       }
       saveCartToStorage(state.items);
     },

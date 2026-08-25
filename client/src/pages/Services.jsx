@@ -60,15 +60,62 @@ const Services = () => {
   // Group mappings
   const categories = [
     { key: 'all', label: 'All Services', icon: <Sparkles className="h-4 w-4" /> },
-    { key: 'cleaning', label: 'Deep Cleaning', icon: <Sparkles className="h-4 w-4" /> },
-    { key: 'maintenance', label: 'Home Repairs', icon: <Wrench className="h-4 w-4" /> },
+    { key: 'cleaning', label: 'Cleaning Services', icon: <Sparkles className="h-4 w-4" /> },
+    { key: 'maintenance', label: 'Home Maintenance Services', icon: <Wrench className="h-4 w-4" /> },
     { key: 'others', label: 'Other Services', icon: <Settings className="h-4 w-4" /> }
   ];
 
-  // Filter based on active category
-  const filteredServices = categoryParam === 'all'
-    ? servicesList
-    : servicesList.filter(s => s.category === categoryParam);
+  const cleaningIds = [
+    'home-deep',
+    'office-deep',
+    'commercial-cleaning',
+    'bathroom-deep',
+    'washroom-cleaning',
+    'sofa-cleaning',
+    'carpet-cleaning',
+    'mattress-cleaning',
+    'kitchen-cleaning',
+    'kitchen-chimney',
+    'water-tank',
+    'underground-tank',
+    'floor-scrubbing'
+  ];
+
+  const maintenanceIds = [
+    'ac-service',
+    'plumbing',
+    'electrical',
+    'carpenter',
+    'painting',
+    'pest-control'
+  ];
+
+  const otherIds = [
+    'solar-panel',
+    'solar-water-heater',
+    'car-wash',
+    'bike-wash',
+    'home-shifting',
+    'packers-movers',
+    'decoration-services'
+  ];
+
+  // Get active IDs based on categoryParam
+  let activeIds = [];
+  if (categoryParam === 'all') {
+    activeIds = [...cleaningIds, ...maintenanceIds, ...otherIds];
+  } else if (categoryParam === 'cleaning') {
+    activeIds = cleaningIds;
+  } else if (categoryParam === 'maintenance') {
+    activeIds = maintenanceIds;
+  } else if (categoryParam === 'others') {
+    activeIds = otherIds;
+  }
+
+  // Filter and order services List strictly
+  const filteredServices = activeIds
+    .map(id => servicesList.find(s => s.id === id) || fallbackServices.find(s => s.id === id))
+    .filter(Boolean);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 relative min-h-screen pb-28">
@@ -177,8 +224,10 @@ const Services = () => {
                       </Link>
                       
                       <div className="flex items-baseline gap-2 mt-1.5">
-                        <span className="text-sm sm:text-base font-black text-slate-900">₹{service.price}</span>
-                        {service.originalPrice && (
+                        <span className="text-sm sm:text-base font-black text-slate-900">
+                          {service.price > 0 ? `₹${service.price}` : "Contact for Quote"}
+                        </span>
+                        {service.originalPrice > 0 && (
                           <>
                             <span className="text-xs text-slate-400 line-through">₹{service.originalPrice}</span>
                             <span className="text-[10px] font-extrabold text-emerald-600">({discount}% OFF)</span>

@@ -19,6 +19,7 @@ const Cart = () => {
   
   const gst = Math.round(subtotal * 0.05); // 5% Safety Tax
   const grandTotal = subtotal + gst;
+  const hasQuoteItems = cartItems.some(item => item.price === 0);
 
   const handleAdd = (item) => dispatch(addToCart(item));
   const handleRemove = (id) => dispatch(removeFromCart(id));
@@ -76,23 +77,37 @@ const Cart = () => {
               <div className="flex-1">
                 <span className="text-[9px] font-bold text-accent tracking-wider uppercase">{item.category}</span>
                 <h4 className="font-display text-sm font-extrabold text-slate-800 leading-tight mt-0.5">{item.name}</h4>
-                <span className="text-xs text-slate-400 mt-1 block">₹{item.price} each</span>
+                
+                {/* Options Breakdown */}
+                {item.selectedOptions && Object.keys(item.selectedOptions).length > 0 && (
+                  <div className="text-[10px] text-slate-500 mt-1.5 space-y-0.5 border-l-2 border-slate-200 pl-2">
+                    {Object.entries(item.selectedOptions).map(([k, v]) => v && (
+                      <div key={k}>
+                        <span className="font-bold text-slate-600">{k}:</span> {v}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                <span className="text-xs text-slate-400 mt-1 block">
+                  {item.price > 0 ? `₹${item.price} each` : "Contact for Quote"}
+                </span>
               </div>
 
               <div className="flex items-center gap-4">
                 {/* Quantity controller */}
                 <div className="flex items-center bg-slate-100 border border-slate-200 text-slate-700 rounded-lg h-8 overflow-hidden font-bold text-xs select-none">
-                  <button onClick={() => handleRemove(item.id)} className="px-2.5 hover:bg-slate-200 h-full transition-colors">
+                  <button onClick={() => handleRemove(item.id)} className="px-2.5 hover:bg-slate-205 h-full transition-colors">
                     <Minus className="h-3 w-3" />
                   </button>
                   <span className="px-1.5">{item.quantity}</span>
-                  <button onClick={() => handleAdd(item)} className="px-2.5 hover:bg-slate-200 h-full transition-colors">
+                  <button onClick={() => handleAdd(item)} className="px-2.5 hover:bg-slate-205 h-full transition-colors">
                     <Plus className="h-3 w-3" />
                   </button>
                 </div>
                 
-                <span className="text-sm font-black text-slate-800 min-w-[60px] text-right">
-                  ₹{item.price * item.quantity}
+                <span className="text-sm font-black text-slate-850 min-w-[70px] text-right">
+                  {item.price > 0 ? `₹${item.price * item.quantity}` : "Quote on Call"}
                 </span>
               </div>
             </div>
@@ -131,6 +146,12 @@ const Cart = () => {
                 <span className="text-primary">₹{grandTotal}</span>
               </div>
             </div>
+
+            {hasQuoteItems && (
+              <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl p-3.5 text-[10px] font-semibold text-center leading-normal">
+                ⚠️ Your cart includes items marked as "Quote on Call". The final cost for these will be quoted on-site.
+              </div>
+            )}
 
             <div className="bg-slate-50 border border-slate-200/50 rounded-xl p-3.5 text-[10px] text-slate-400 font-medium text-center leading-normal">
               💵 Payments are completed after service execution (Cash or UPI).

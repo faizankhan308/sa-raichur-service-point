@@ -55,7 +55,7 @@ const seedServices = async () => {
         { upsert: true, new: true }
       );
     }
-    console.log('✅ Services collection synchronized with final 15-item catalog!');
+    console.log('✅ Services collection synchronized with final catalog!');
   } catch (error) {
     console.error(`❌ Failed to synchronize services database: ${error.message}`);
   }

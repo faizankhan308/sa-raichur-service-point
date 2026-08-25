@@ -51,7 +51,8 @@ const Booking = () => {
       id: item.id,
       name: item.name,
       price: item.price,
-      quantity: item.quantity
+      quantity: item.quantity,
+      selectedOptions: item.selectedOptions || null
     }));
 
     // Primary service name for overview
@@ -78,7 +79,17 @@ const Booking = () => {
         dispatch(clearCart()); // Empty the cart upon success
 
         // Automatically launch WhatsApp with booking info
-        const serviceNamesText = data.booking.services.map(s => `${s.name} (x${s.quantity})`).join(', ');
+        const serviceNamesText = data.booking.services.map(s => {
+          let text = `${s.name} (x${s.quantity})`;
+          if (s.selectedOptions && Object.keys(s.selectedOptions).length > 0) {
+            const opts = Object.entries(s.selectedOptions)
+              .map(([k, v]) => v ? `${k}: ${v}` : '')
+              .filter(Boolean)
+              .join(', ');
+            if (opts) text += ` [${opts}]`;
+          }
+          return text;
+        }).join(', ');
         const whatsappText = encodeURIComponent(
           `*S A RAICHUR SERVICE POINT - NEW BOOKING*\n\n` +
           `*Booking ID:* ${data.booking.id}\n` +
@@ -105,7 +116,17 @@ const Booking = () => {
 
   // If successful booking exists, show the confirmation screen
   if (activeBooking) {
-    const serviceNamesText = activeBooking.services.map(s => `${s.name} (x${s.quantity})`).join(', ');
+    const serviceNamesText = activeBooking.services.map(s => {
+      let text = `${s.name} (x${s.quantity})`;
+      if (s.selectedOptions && Object.keys(s.selectedOptions).length > 0) {
+        const opts = Object.entries(s.selectedOptions)
+          .map(([k, v]) => v ? `${k}: ${v}` : '')
+          .filter(Boolean)
+          .join(', ');
+        if (opts) text += ` [${opts}]`;
+      }
+      return text;
+    }).join(', ');
     const whatsappText = encodeURIComponent(
       `*S A RAICHUR SERVICE POINT - NEW BOOKING*\n\n` +
       `*Booking ID:* ${activeBooking.id}\n` +
@@ -139,7 +160,10 @@ const Booking = () => {
           <div><span className="text-slate-400 font-bold uppercase tracking-wider block mb-0.5">Schedule</span> {activeBooking.preferredDate} ({activeBooking.preferredTime})</div>
           <div><span className="text-slate-400 font-bold uppercase tracking-wider block mb-0.5">Address</span> {activeBooking.address}</div>
           <div><span className="text-slate-400 font-bold uppercase tracking-wider block mb-0.5">Services</span> {serviceNamesText}</div>
-          <div><span className="text-slate-400 font-bold uppercase tracking-wider block mb-0.5">Amount</span> ₹{activeBooking.totalAmount} (incl. GST)</div>
+          <div>
+            <span className="text-slate-400 font-bold uppercase tracking-wider block mb-0.5">Amount</span> 
+            ₹{activeBooking.totalAmount} {activeBooking.services.some(s => s.price === 0) ? "(excludes Quote on Call services)" : "(incl. GST)"}
+          </div>
         </div>
 
         <div className="flex flex-col gap-3">
@@ -316,12 +340,23 @@ const Booking = () => {
 
             <div className="space-y-3.5 max-h-48 overflow-y-auto pr-1">
               {cartItems.map(item => (
-                <div key={item.id} className="flex justify-between items-center text-xs">
-                  <div className="max-w-[70%]">
-                    <span className="font-semibold text-slate-800 block truncate">{item.name}</span>
-                    <span className="text-slate-400 text-[10px]">Qty: {item.quantity}</span>
+                <div key={item.id} className="text-xs border-b border-slate-50 pb-2.5 last:border-b-0 last:pb-0">
+                  <div className="flex justify-between items-start">
+                    <div className="max-w-[70%]">
+                      <span className="font-semibold text-slate-800 block truncate">{item.name}</span>
+                      {item.selectedOptions && Object.keys(item.selectedOptions).length > 0 && (
+                        <div className="text-[9px] text-slate-400 mt-0.5 space-y-0.5 border-l-2 border-slate-100 pl-1.5">
+                          {Object.entries(item.selectedOptions).map(([k, v]) => v && (
+                            <div key={k}>{k}: {v}</div>
+                          ))}
+                        </div>
+                      )}
+                      <span className="text-slate-400 text-[9px] mt-0.5 block">Qty: {item.quantity}</span>
+                    </div>
+                    <span className="font-bold text-slate-800">
+                      {item.price > 0 ? `₹${item.price * item.quantity}` : "Quote on Call"}
+                    </span>
                   </div>
-                  <span className="font-bold text-slate-800">₹{item.price * item.quantity}</span>
                 </div>
               ))}
             </div>

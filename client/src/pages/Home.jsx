@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Star, ShieldCheck, Sparkles, Wrench, Settings, ChevronRight, Phone, MessageSquare, Plus, Minus, Search, MapPin, Award, CheckCircle2, ChevronDown } from 'lucide-react';
-import { fetchServices } from '../services/api';
+import { Star, ShieldCheck, Sparkles, Wrench, Settings, ChevronRight, Phone, MessageSquare, Plus, Minus, Search, MapPin, Award, CheckCircle2, ChevronDown, Users, Clock, ShieldAlert } from 'lucide-react';
+import { fetchServices, fetchReviews, submitReview, fetchGoogleReviews } from '../services/api';
 import { services as fallbackServices, getOrderedServices } from '../data/services';
 import { spotlightBanners, noteworthyBanners } from '../data/spotlight';
 import { addToCart, removeFromCart, selectCartItems } from '../redux/cartSlice';
@@ -18,8 +18,99 @@ const Home = () => {
   const [showHeroSuggestions, setShowHeroSuggestions] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
 
+  // Dynamic Customer Reviews State
+  const [reviewsList, setReviewsList] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [reviewName, setReviewName] = useState('');
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
+  const [reviewService, setReviewService] = useState('');
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+
+  // Future Google Places API integration states
+  const [googleBusiness, setGoogleBusiness] = useState({
+    rating: null,
+    reviewsCount: null,
+    reviews: [],
+    profileUrl: "https://maps.google.com/?q=S+A+Raichur+Service+Point+Raichur"
+  });
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [googleUnavailable, setGoogleUnavailable] = useState(true);
+
   const cartItems = useSelector(selectCartItems);
   const heroSearchRef = useRef(null);
+
+  // Load reviews from API
+  const loadReviewsData = async () => {
+    setReviewsLoading(true);
+    try {
+      const data = await fetchReviews();
+      if (data.success && data.reviews) {
+        setReviewsList(data.reviews);
+      }
+    } catch (err) {
+      console.warn('Error loading customer reviews:', err);
+    } finally {
+      setReviewsLoading(false);
+    }
+  };
+
+  // Future Google Places API integration fetch placeholder
+  const loadGoogleReviewsData = async () => {
+    setGoogleLoading(true);
+    try {
+      const data = await fetchGoogleReviews();
+      if (data.success && data.configured && data.googleBusiness) {
+        setGoogleBusiness(data.googleBusiness);
+        setGoogleUnavailable(false);
+      } else {
+        setGoogleUnavailable(true);
+      }
+    } catch (err) {
+      console.warn('Google Places API integration placeholder error:', err);
+      setGoogleUnavailable(true);
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadReviewsData();
+    loadGoogleReviewsData();
+  }, []);
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!reviewName.trim() || !reviewComment.trim()) {
+      setSubmitError('Name and comment are required.');
+      return;
+    }
+    setSubmitLoading(true);
+    setSubmitError('');
+    setSubmitSuccess(false);
+    try {
+      const res = await submitReview({
+        name: reviewName.trim(),
+        rating: reviewRating,
+        comment: reviewComment.trim(),
+        service: reviewService
+      });
+      if (res.success) {
+        setSubmitSuccess(true);
+        setReviewName('');
+        setReviewComment('');
+        setReviewService('');
+        setReviewRating(5);
+        loadReviewsData();
+      }
+    } catch (err) {
+      setSubmitError(err.message || 'Failed to submit review.');
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
 
   // Load services from API on mount
   useEffect(() => {
@@ -76,8 +167,44 @@ const Home = () => {
     }
   };
 
-  // Slice first 5 services as the most booked selection
-  const mostBooked = servicesList.slice(0, 6);
+  // Priority IDs used in the review form dropdown (keep for review service selector)
+  const priorityIds = [
+    'home-deep',
+    'water-tank-sump',
+    'washroom-cleaning',
+    'sofa-cleaning',
+    'carpet-cleaning',
+    'mattress-cleaning',
+    'kitchen-chimney',
+    'bathroom-deep',
+    'floor-scrubbing',
+    'pest-control',
+    'solar-panel',
+    'packers-movers'
+  ];
+
+  // All 12 priority services in exact client-approved order for Our Services section
+  const allServicesOrder = [
+    'home-deep',
+    'water-tank-sump',
+    'washroom-cleaning',
+    'sofa-cleaning',
+    'carpet-cleaning',
+    'mattress-cleaning',
+    'kitchen-chimney',
+    'floor-scrubbing',
+    'pest-control',
+    'solar-panel',
+    'packers-movers'
+  ];
+  const allServicesGrid = allServicesOrder
+    .map(id => {
+      const found = servicesList.find(s => s.id === id) || fallbackServices.find(s => s.id === id);
+      if (!found) return null;
+      if (found.id === 'sofa-cleaning') return { ...found, name: 'Sofa Cleaning' };
+      return found;
+    })
+    .filter(Boolean);
 
   const handleCategoryNav = (cat) => {
     navigate(`/services?category=${cat}`);
@@ -103,21 +230,59 @@ const Home = () => {
     { label: 'Packers & Movers', cat: 'others', emoji: '📦', desc: 'Household shifting' }
   ];
 
-  const trustBadges = [
+  // Configurable Google Reviews
+  const googleReviewsConfig = {
+    rating: 0, // Configurable Google Rating (set to > 0 once verified)
+    totalReviews: 0, // Configurable Review Count
+    mapsLink: "https://maps.google.com/?q=S+A+Raichur+Service+Point+Raichur"
+  };
+
+  // 9 Commitment Points for Why Choose Us
+  const whyChoosePoints = [
     {
-      title: "Background-Verified Pros",
-      desc: "Every service provider is vetted, background checked, and fully trained to maintain S A quality standards.",
-      icon: <Award className="h-6 w-6 text-accent" />
+      title: "Trained & Experienced Team",
+      desc: "Our partners are background-verified, skilled specialists with years of home maintenance and corporate sanitizing experience.",
+      icon: <Users className="h-5 w-5 text-accent" />
     },
     {
-      title: "Hygienic Tools & Solutions",
-      desc: "Our cleaning partners carry high-pressure jet wash tools, scrubbers, and safe non-toxic chemicals.",
-      icon: <ShieldCheck className="h-6 w-6 text-accent" />
+      title: "Professional Cleaning Equipment",
+      desc: "Equipped with heavy-duty industrial vacuum cleaners, single-disc scrubbers, and high-pressure washing jets.",
+      icon: <Wrench className="h-5 w-5 text-accent" />
     },
     {
-      title: "Satisfaction Guarantee",
-      desc: "Customer happiness is our core goal. If anything is missed, we will return and complete it cleanly.",
-      icon: <CheckCircle2 className="h-6 w-6 text-accent" />
+      title: "Safe & Hygienic Cleaning Products",
+      desc: "We use non-toxic, child-safe, pet-friendly cleaning chemicals that effectively disinfect your environment.",
+      icon: <ShieldCheck className="h-5 w-5 text-accent" />
+    },
+    {
+      title: "Reliable Home Service",
+      desc: "Rest easy knowing S A Raichur Service Point handles every request with strict professionalism and extreme care.",
+      icon: <ShieldAlert className="h-5 w-5 text-accent" />
+    },
+    {
+      title: "Affordable Pricing",
+      desc: "Transparent upfront rates with zero surprise charges. We provide first-rate value tailored directly to your budget.",
+      icon: <Award className="h-5 w-5 text-accent" />
+    },
+    {
+      title: "Quality Work",
+      desc: "We don't cut corners. From deep cleaning tiles to fixing plumbing lines, we guarantee a neat and durable finish.",
+      icon: <Award className="h-5 w-5 text-accent" />
+    },
+    {
+      title: "On-Time Service",
+      desc: "Punctuality is our core promise. We arrive fully equipped exactly at your selected booking time slot.",
+      icon: <Clock className="h-5 w-5 text-accent" />
+    },
+    {
+      title: "Residential & Commercial Services",
+      desc: "Providing home maintenance and commercial cleaning services across small apartments, villas, offices, and hotels.",
+      icon: <Sparkles className="h-5 w-5 text-accent" />
+    },
+    {
+      title: "Customer Satisfaction Focused",
+      desc: "Focused entirely on client reviews. We do follow-up checks to make sure our work met your expectations.",
+      icon: <CheckCircle2 className="h-5 w-5 text-accent" />
     }
   ];
 
@@ -149,17 +314,27 @@ const Home = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,163,196,0.15),transparent_40%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(0,82,204,0.12),transparent_45%)]" />
         
-        <div className="max-w-4xl mx-auto px-4 text-center relative z-10 space-y-6 sm:space-y-8">
+        <div className="max-w-4xl mx-auto px-4 text-center relative z-10 space-y-5">
           <div className="space-y-3">
             <span className="inline-block bg-white/10 backdrop-blur-md border border-white/15 text-accent text-[9px] sm:text-[10px] font-black px-4.5 py-1 rounded-full uppercase tracking-wider select-none">
               Raichur's Professional Service Network
             </span>
+            <h1 className="font-display text-2xl sm:text-3xl font-black text-accent tracking-wide uppercase">
+              S A Raichur Service Point
+            </h1>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight max-w-2xl mx-auto">
               “Clean Homes. Trusted Service. Happy Customers.”
             </h2>
-            <p className="text-slate-400 text-xs sm:text-sm max-w-md mx-auto font-medium">
-              S A Raichur Service Point — All Services Under One Roof. We provide professional home cleaning, repairs, and support across Raichur.
-            </p>
+            <div className="text-slate-350 text-xs sm:text-sm font-semibold max-w-lg mx-auto space-y-1">
+              <p className="font-black text-white text-base">All Services Under One Roof</p>
+              <p>We provide professional services across Raichur.</p>
+            </div>
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 px-5 py-2 rounded-full mt-2">
+              <Phone className="h-4 w-4 text-accent animate-pulse" />
+              <span className="text-xs sm:text-sm font-extrabold text-white">
+                Call/WhatsApp: <a href="tel:7411741418" className="hover:text-accent underline">7411741418</a> | <a href="tel:8867647591" className="hover:text-accent underline">8867647591</a>
+              </span>
+            </div>
           </div>
 
           {/* Search box overlay */}
@@ -245,7 +420,172 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 3. Spotlight Banners (Offers & Special Campaigns) */}
+      {/* 3. Our Services — Complete Catalog (all 12 priority services) */}
+      <section className="py-16 bg-white border-b border-slate-200/50" id="our-services">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* Section Header */}
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
+            <div>
+              <span className="text-[9px] font-extrabold text-accent uppercase tracking-widest block mb-1">All Services Under One Roof</span>
+              <h2 className="font-display text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Our Services</h2>
+              <p className="text-slate-500 text-xs font-medium mt-1.5 max-w-md">
+                Professional home services in Raichur — book instantly and we'll be at your door.
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/services')}
+              className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-700 text-white text-xs font-black px-5 py-2.5 rounded-xl transition-colors shrink-0 self-start sm:self-auto shadow-sm"
+            >
+              View All Services <ChevronRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-14 gap-2">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
+              <span className="text-slate-400 text-xs font-semibold">Loading services...</span>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+              {/* Cards 1–11: regular service cards in exact priority order */}
+              {allServicesGrid.map((service) => {
+                const cartItem = cartItems.find(item => item.id === service.id);
+                const quantity = cartItem ? cartItem.quantity : 0;
+                const discount = service.originalPrice
+                  ? Math.round(((service.originalPrice - service.price) / service.originalPrice) * 100)
+                  : 0;
+                return (
+                  <div
+                    key={service.id}
+                    onClick={() => navigate(`/service/${service.id}`)}
+                    className="w-full bg-white border border-slate-200/70 rounded-3xl overflow-hidden shadow-sm cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between"
+                  >
+                    <div>
+                      {/* Service Image */}
+                      <div className="relative aspect-[16/10] overflow-hidden">
+                        <img
+                          src={service.image}
+                          alt={service.name}
+                          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                        />
+                        {discount > 0 && (
+                          <span className="absolute top-2.5 left-2.5 bg-emerald-600 text-white text-[8px] font-black px-2 py-0.5 rounded shadow-sm">
+                            {discount}% OFF
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Service Info */}
+                      <div className="p-4 space-y-1.5">
+                        <span className="text-[9px] font-bold text-accent uppercase tracking-wider block capitalize">{service.category}</span>
+                        <h4 className="font-display text-sm font-extrabold text-slate-800 line-clamp-1 leading-snug">{service.name}</h4>
+                        <p className="text-[10px] text-slate-500 font-medium line-clamp-2 leading-relaxed">{service.description}</p>
+
+                        {/* Rating Row */}
+                        <div className="flex items-center gap-1.5 text-[10px] text-slate-500 pt-0.5">
+                          <div className="flex items-center text-yellow-500 bg-yellow-50 px-1.5 py-0.5 rounded border border-yellow-100">
+                            <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
+                            <span className="font-bold ml-0.5">{service.rating.toFixed(1)}</span>
+                          </div>
+                          <span>•</span>
+                          <span>{service.reviewCount} reviews</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Price + ADD Button */}
+                    <div className="p-4 border-t border-slate-100 flex items-center justify-between gap-2">
+                      <div className="flex flex-col">
+                        <span className="text-[9px] text-slate-400 font-extrabold leading-none uppercase">Starts at</span>
+                        <span className="text-xs sm:text-sm font-black text-slate-900 mt-1">
+                          {service.price > 0 ? `₹${service.price}` : 'Get Quote'}
+                        </span>
+                      </div>
+                      <div onClick={(e) => e.stopPropagation()}>
+                        {quantity > 0 ? (
+                          <div className="flex items-center bg-slate-900 text-white rounded-lg h-7 select-none font-bold text-[10px] overflow-hidden px-1">
+                            <button onClick={() => handleRemove(service.id)} className="px-1.5 hover:text-accent transition-colors">
+                              <Minus className="h-2.5 w-2.5" />
+                            </button>
+                            <span className="px-1 text-xs">{quantity}</span>
+                            <button onClick={() => handleAdd(service)} className="px-1.5 hover:text-accent transition-colors">
+                              <Plus className="h-2.5 w-2.5" />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => handleAdd(service)}
+                            className="bg-slate-50 hover:bg-slate-900 hover:text-white border border-slate-200 text-[10px] font-black px-3.5 py-1.5 rounded-lg shadow-sm transition-all duration-150 flex items-center gap-0.5"
+                          >
+                            <span>ADD</span>
+                            <Plus className="h-3 w-3" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Card #12 — Other Home Maintenance Services (special grouped card) */}
+              <div
+                onClick={() => navigate('/services?category=maintenance')}
+                className="w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700 rounded-3xl overflow-hidden shadow-sm cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between"
+              >
+                <div>
+                  {/* Background image with overlay */}
+                  <div className="relative aspect-[16/10] overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80"
+                      alt="Other Home Maintenance Services"
+                      className="w-full h-full object-cover opacity-30 transition-transform duration-500 hover:scale-105"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Wrench className="h-10 w-10 text-white/60" />
+                    </div>
+                    <span className="absolute top-2.5 left-2.5 bg-white/15 backdrop-blur-sm text-white text-[8px] font-black px-2 py-0.5 rounded border border-white/20 uppercase tracking-wider">
+                      Multiple Services
+                    </span>
+                  </div>
+
+                  {/* Info */}
+                  <div className="p-4 space-y-2">
+                    <span className="text-[9px] font-bold text-accent uppercase tracking-wider block">maintenance</span>
+                    <h4 className="font-display text-sm font-extrabold text-white leading-snug">Other Home Maintenance Services</h4>
+                    <p className="text-[10px] text-slate-400 font-medium leading-relaxed">Expert repair & maintenance for all your home needs.</p>
+
+                    {/* Sub-service chips */}
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {['AC Service & Repair', 'Plumbing', 'Electrical Work', 'Carpenter', 'Painting'].map(sub => (
+                        <span
+                          key={sub}
+                          className="text-[8px] font-bold bg-white/10 text-slate-300 px-2 py-0.5 rounded-lg border border-white/10"
+                        >
+                          {sub}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="p-4 border-t border-white/10 flex items-center justify-between gap-2">
+                  <span className="text-[10px] text-slate-400 font-bold">5 services available</span>
+                  <button className="bg-white/10 hover:bg-white/20 text-white text-[10px] font-black px-3.5 py-1.5 rounded-lg border border-white/15 transition-all flex items-center gap-1">
+                    <span>VIEW ALL</span>
+                    <ChevronRight className="h-3 w-3" />
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* 4. Spotlight Banners (Offers & Special Campaigns) */}
       <section className="py-14 bg-white border-b border-slate-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
@@ -324,109 +664,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 5. Most Booked Carousel Section (Displays actual service items from backend seed) */}
-      <section className="py-14 bg-white border-b border-slate-200/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1">Top Selections</span>
-            <h2 className="font-display text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              Most booked services
-            </h2>
-          </div>
 
-          {loading ? (
-            <div className="flex flex-col items-center justify-center py-10 gap-2">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
-              <span className="text-slate-400 text-xs font-semibold">Syncing most booked catalog...</span>
-            </div>
-          ) : (
-            <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-thin">
-              {mostBooked.map((service) => {
-                const cartItem = cartItems.find(item => item.id === service.id);
-                const quantity = cartItem ? cartItem.quantity : 0;
-
-                // Calculate discount
-                const discount = service.originalPrice 
-                  ? Math.round(((service.originalPrice - service.price) / service.originalPrice) * 100)
-                  : 0;
-
-                return (
-                  <div
-                    key={service.id}
-                    onClick={() => navigate(`/service/${service.id}`)}
-                    className="flex-shrink-0 w-64 bg-white border border-slate-200/70 rounded-3xl overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-shadow flex flex-col justify-between"
-                  >
-                    <div>
-                      {/* Image */}
-                      <div className="relative aspect-[16/10] overflow-hidden">
-                        <img 
-                          src={service.image} 
-                          alt={service.name} 
-                          className="w-full h-full object-cover"
-                        />
-                        {discount > 0 && (
-                          <span className="absolute top-2.5 left-2.5 bg-slate-900 text-white text-[8px] font-black px-2 py-0.5 rounded shadow-sm">
-                            {discount}% OFF
-                          </span>
-                        )}
-                      </div>
-                      
-                      {/* Details */}
-                      <div className="p-4 space-y-1.5">
-                        <span className="text-[9px] font-bold text-accent uppercase tracking-wider block">{service.category}</span>
-                        <h4 className="font-display text-sm font-extrabold text-slate-800 line-clamp-1 leading-snug">
-                          {service.name}
-                        </h4>
-                        
-                        {/* Rating row */}
-                        <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
-                          <div className="flex items-center text-yellow-500 bg-yellow-50 px-1.5 py-0.5 rounded border border-yellow-100">
-                            <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
-                            <span className="font-bold ml-0.5">{service.rating.toFixed(1)}</span>
-                          </div>
-                          <span>•</span>
-                          <span>{service.reviewCount} reviews</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Price and Cart controls */}
-                    <div className="p-4 border-t border-slate-100 flex items-center justify-between gap-2">
-                      <div className="flex flex-col">
-                        <span className="text-[9px] text-slate-400 font-extrabold leading-none uppercase">Starts at</span>
-                        <span className="text-sm font-black text-slate-900 mt-1">₹{service.price}</span>
-                      </div>
-
-                      {/* Add button with propagation stop */}
-                      <div onClick={(e) => e.stopPropagation()}>
-                        {quantity > 0 ? (
-                          <div className="flex items-center bg-slate-900 text-white rounded-lg h-7 select-none font-bold text-[10px] overflow-hidden px-1">
-                            <button onClick={() => handleRemove(service.id)} className="px-1.5 hover:text-accent transition-colors">
-                              <Minus className="h-2.5 w-2.5" />
-                            </button>
-                            <span className="px-1 text-xs">{quantity}</span>
-                            <button onClick={() => handleAdd(service)} className="px-1.5 hover:text-accent transition-colors">
-                              <Plus className="h-2.5 w-2.5" />
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => handleAdd(service)}
-                            className="bg-slate-50 hover:bg-slate-900 hover:text-white border border-slate-200 text-[10px] font-black px-3.5 py-1.5 rounded-lg shadow-sm transition-all duration-150 flex items-center gap-0.5"
-                          >
-                            <span>ADD</span>
-                            <Plus className="h-3 w-3" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </section>
 
       {/* 6. Why Choose Us (Sleek Dual-Column layout showcasing the official logo) */}
       <section className="py-16 bg-slate-50 border-b border-slate-200/50" id="why-choose-us">
@@ -466,21 +704,21 @@ const Home = () => {
                 </p>
               </div>
 
-              {/* Vertical Stack of Trust Badges */}
-              <div className="space-y-4">
-                {trustBadges.map((badge, i) => (
+              {/* Grid of Why Choose Us Points */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {whyChoosePoints.map((badge, i) => (
                   <div
                     key={i}
-                    className="bg-white rounded-2xl p-5 border border-slate-200/50 shadow-sm hover:shadow-md transition-shadow flex items-start gap-4"
+                    className="bg-white rounded-2xl p-4 border border-slate-200/50 shadow-sm hover:shadow-md transition-shadow flex items-start gap-3"
                   >
-                    <div className="h-10 w-10 bg-slate-900/5 flex items-center justify-center rounded-xl text-slate-900 shrink-0">
+                    <div className="h-9 w-9 bg-slate-900/5 flex items-center justify-center rounded-xl text-slate-900 shrink-0">
                       {badge.icon}
                     </div>
-                    <div className="space-y-1">
-                      <h4 className="font-display text-sm font-extrabold text-slate-900">
+                    <div className="space-y-0.5">
+                      <h4 className="font-display text-xs font-extrabold text-slate-900">
                         {badge.title}
                       </h4>
-                      <p className="text-xs text-slate-500 leading-relaxed font-sans font-medium">
+                      <p className="text-[11px] text-slate-500 leading-normal font-sans font-medium">
                         {badge.desc}
                       </p>
                     </div>
@@ -489,6 +727,287 @@ const Home = () => {
               </div>
             </div>
 
+          </div>
+        </div>
+      </section>
+
+      {/* Dynamic Customer Reviews & Ratings Section */}
+      <section className="py-16 bg-slate-50 border-b border-slate-200/50" id="reviews">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center max-w-xl mx-auto mb-12 space-y-2">
+            <span className="text-[9px] font-extrabold text-accent uppercase tracking-widest block">Customer Reviews</span>
+            <h3 className="font-display text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              What Our Customers Say
+            </h3>
+            <p className="text-slate-500 text-xs sm:text-sm font-medium">
+              Real reviews and ratings submitted by verified homeowners and businesses in Raichur.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Left Column: Summary and Form */}
+            <div className="lg:col-span-4 space-y-6">
+              {/* Rating Summary Card */}
+              <div className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm text-center space-y-4">
+                <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider">Overall Rating</h4>
+                
+                {reviewsLoading ? (
+                  <div className="py-4 text-xs font-semibold text-slate-400">Loading summary...</div>
+                ) : reviewsList.length > 0 ? (
+                  (() => {
+                    const avg = reviewsList.reduce((acc, r) => acc + r.rating, 0) / reviewsList.length;
+                    return (
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-center gap-1">
+                          <span className="text-4xl font-black text-slate-900">{avg.toFixed(1)}</span>
+                          <span className="text-slate-400 text-sm font-bold mt-2">/ 5.0</span>
+                        </div>
+                        <div className="flex items-center justify-center gap-0.5 text-yellow-500">
+                          {[...Array(5)].map((_, i) => (
+                            <Star 
+                              key={i} 
+                              className={`h-4 w-4 ${i < Math.round(avg) ? 'fill-yellow-500 text-yellow-500' : 'text-slate-200'}`} 
+                            />
+                          ))}
+                        </div>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">
+                          Based on {reviewsList.length} verified review{reviewsList.length > 1 ? 's' : ''}
+                        </p>
+                      </div>
+                    );
+                  })()
+                ) : (
+                  <div className="space-y-2">
+                    <p className="text-sm font-bold text-slate-700">No reviews yet</p>
+                    <p className="text-[10px] text-slate-400 font-medium">Be the first to share your experience with S A Raichur Service Point!</p>
+                  </div>
+                )}
+
+                {/* Divider */}
+                <hr className="border-slate-100 my-4" />
+
+                {/* Google Reviews Area */}
+                <div className="space-y-3">
+                  <h5 className="text-[10px] font-black text-slate-800 uppercase tracking-wider block">Google Reviews</h5>
+                  {googleLoading ? (
+                    <p className="text-[11px] text-slate-400 font-semibold py-2">Loading Google ratings...</p>
+                  ) : (!googleUnavailable && googleBusiness.rating && googleBusiness.reviewsCount) ? (
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-center gap-1">
+                        <span className="text-2xl font-black text-slate-900">{googleBusiness.rating}</span>
+                        <span className="text-slate-400 text-xs font-bold mt-1">/ 5.0</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-0.5 text-yellow-500">
+                        {[...Array(5)].map((_, i) => (
+                          <Star 
+                            key={i} 
+                            className={`h-3.5 w-3.5 ${i < Math.round(googleBusiness.rating) ? 'fill-yellow-500 text-yellow-550' : 'text-slate-200'}`} 
+                          />
+                        ))}
+                      </div>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">
+                        Based on {googleBusiness.reviewsCount} Google reviews
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-[11px] text-slate-500 font-medium">
+                        See our customer feedback on Google
+                      </p>
+                    </div>
+                  )}
+
+                  <a
+                    href={googleBusiness.profileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-black px-4 py-2.5 rounded-xl transition-all shadow-sm w-full justify-center select-none"
+                  >
+                    <svg className="h-4 w-4" viewBox="0 0 24 24">
+                      <path
+                        fill="#4285F4"
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                      />
+                    </svg>
+                    View us on Google &rarr;
+                  </a>
+                </div>
+              </div>
+
+              {/* Submit Review Form */}
+              <div className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm space-y-4 text-left">
+                <h4 className="text-xs font-black text-slate-850 uppercase tracking-wider">Submit a Review</h4>
+                <form onSubmit={handleReviewSubmit} className="space-y-3.5">
+                  {submitSuccess && (
+                    <div className="bg-emerald-50 text-emerald-805 text-[11px] font-bold p-3 rounded-xl border border-emerald-150 animate-fade-in">
+                      🎉 Review submitted successfully!
+                    </div>
+                  )}
+                  {submitError && (
+                    <div className="bg-red-50 text-red-700 text-[11px] font-bold p-3 rounded-xl border border-red-150">
+                      ⚠️ {submitError}
+                    </div>
+                  )}
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Full Name</label>
+                    <input
+                      type="text"
+                      required
+                      value={reviewName}
+                      onChange={(e) => setReviewName(e.target.value)}
+                      placeholder="Your name"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:bg-white"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rating</label>
+                    <div className="flex gap-1.5 items-center">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setReviewRating(star)}
+                          className="focus:outline-none"
+                        >
+                          <Star
+                            className={`h-6 w-6 cursor-pointer transition-colors ${
+                              star <= reviewRating ? 'fill-yellow-500 text-yellow-500' : 'text-slate-200 hover:text-yellow-400'
+                            }`}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Service Availed</label>
+                    <select
+                      value={reviewService}
+                      onChange={(e) => setReviewService(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:bg-white"
+                    >
+                      <option value="">Select Service (Optional)</option>
+                      {priorityIds.map((id) => {
+                        const s = fallbackServices.find(item => item.id === id);
+                        return s ? <option key={id} value={s.name}>{s.name}</option> : null;
+                      })}
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Your Review</label>
+                    <textarea
+                      required
+                      rows="3"
+                      value={reviewComment}
+                      onChange={(e) => setReviewComment(e.target.value)}
+                      placeholder="Write your review here..."
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:bg-white resize-none"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={submitLoading}
+                    className="w-full bg-slate-900 hover:bg-slate-950 text-white text-xs font-black h-10 rounded-xl transition-all shadow-sm flex items-center justify-center select-none"
+                  >
+                    {submitLoading ? 'Submitting...' : 'Submit Review'}
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            {/* Right Column: Review List */}
+            <div className="lg:col-span-8 space-y-4">
+              {/* Google Business Reviews Placeholder Card */}
+              <div className="bg-slate-100/50 border border-dashed border-slate-200/80 rounded-2xl p-5 text-center space-y-2">
+                <div className="flex items-center justify-center gap-1.5 text-slate-450">
+                  <svg className="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24">
+                    <path d="M21.35 11.1h-9.17v2.73h6.51c-.33 1.56-1.56 2.95-3.24 3.5v2.88h5.13c3.02-2.77 4.77-6.86 4.77-11.75 0-.61-.06-1.2-.17-1.76zM12.18 16.5c-2.48 0-4.58-1.68-5.33-3.95H1.58v2.84c1.55 3.09 4.77 5.11 8.5 5.11 2.97 0 5.46-.98 7.28-2.66l-5.13-2.88c-.98.66-2.23 1.06-3.71 1.06zM6.85 11.55c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V4.53H1.58C.59 6.5.03 8.7.03 11s.56 4.5 1.55 6.47l4.43-3.41c-.22-.66-.35-1.36-.35-2.09zM12.18 4.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 1.09 14.97 0 12.18 0 8.45 0 5.23 2.02 3.68 5.11l4.43 3.41c.75-2.27 2.85-3.95 5.33-3.95z"/>
+                  </svg>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">Google Customer Reviews</span>
+                </div>
+                <p className="text-[11px] text-slate-450 font-medium leading-relaxed max-w-sm mx-auto">
+                  Customer feedback from our Google Business profile will appear here.
+                </p>
+              </div>
+
+              {reviewsLoading ? (
+                <div className="flex flex-col items-center justify-center py-20 gap-2 bg-white rounded-3xl border border-slate-200/60 p-8 shadow-sm">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
+                  <span className="text-slate-400 text-xs font-semibold">Loading reviews...</span>
+                </div>
+              ) : reviewsList.length === 0 ? (
+                <div className="text-center py-16 bg-white border border-slate-200/60 rounded-3xl p-8 shadow-sm max-w-md mx-auto">
+                  <span className="text-4xl">⭐</span>
+                  <h4 className="font-display text-base font-black text-slate-800 mt-4">No Verified Reviews Yet</h4>
+                  <p className="text-slate-550 text-xs mt-1">Be the first to submit a review for our service point!</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {[...reviewsList]
+                    .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+                    .slice(0, 3)
+                    .map((rev, index) => (
+                    <div
+                      key={rev._id || index}
+                      className="bg-white rounded-2xl p-5 border border-slate-200/60 shadow-sm text-left flex flex-col justify-between hover:shadow-md transition-shadow"
+                    >
+                      <div className="space-y-2">
+                        {/* Rating & Date */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-0.5 text-yellow-500">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`h-3.5 w-3.5 ${i < rev.rating ? 'fill-yellow-500 text-yellow-500' : 'text-slate-150'}`}
+                              />
+                            ))}
+                          </div>
+                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                            {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('en-IN', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric'
+                            }) : 'Recent'}
+                          </span>
+                        </div>
+
+                        {/* Comment */}
+                        <p className="text-xs text-slate-700 leading-relaxed font-medium">"{rev.comment}"</p>
+                      </div>
+
+                      {/* Author Info */}
+                      <div className="border-t border-slate-50 pt-3 mt-3 flex items-center justify-between">
+                        <div>
+                          <p className="text-xs font-black text-slate-900">{rev.name}</p>
+                          <p className="text-[10px] text-slate-400 font-bold">Verified Customer • Raichur</p>
+                        </div>
+                        {rev.service && (
+                          <span className="text-[9px] font-extrabold text-accent bg-accent-light px-2.5 py-0.5 rounded-lg border border-accent/10">
+                            {rev.service}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>

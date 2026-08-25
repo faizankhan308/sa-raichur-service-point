@@ -144,3 +144,36 @@ export const deleteServiceApi = async (token, id) => {
   }
   return res.json();
 };
+
+export const fetchReviews = async () => {
+  const res = await fetch(`${API_BASE}/reviews`);
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Failed to retrieve customer reviews.');
+  }
+  return res.json();
+};
+
+export const submitReview = async (reviewData) => {
+  const res = await fetch(`${API_BASE}/reviews`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(reviewData)
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Failed to submit your review.');
+  }
+  return res.json();
+};
+
+export const fetchGoogleReviews = async () => {
+  const res = await fetch(`${API_BASE}/reviews/google`);
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Failed to retrieve Google Business reviews.');
+  }
+  return res.json();
+};
