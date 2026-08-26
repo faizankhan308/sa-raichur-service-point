@@ -19,6 +19,7 @@ import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
 import MyBookings from './pages/MyBookings';
 import BookService from './pages/BookService';
+import AdminReset from './pages/AdminReset';
 
 // Auth Guard for admin portal paths
 const ProtectedRoute = ({ children }) => {
@@ -43,6 +44,7 @@ function App() {
             <Route path="/booking" element={<Booking />} />
             <Route path="/my-bookings" element={<MyBookings />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/admin-reset" element={<AdminReset />} />
             <Route 
               path="/admin" 
               element={

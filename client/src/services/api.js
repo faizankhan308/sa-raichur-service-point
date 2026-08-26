@@ -61,7 +61,21 @@ export const loginAdminApi = async (username, password) => {
   return res.json();
 };
 
+export const resetAdminCredentialsApi = async (resetKey, newUsername, newPassword) => {
+  const res = await fetch(`${API_BASE}/auth/reset-credentials`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ resetKey, newUsername, newPassword })
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Credential reset failed.');
+  }
+  return res.json();
+};
+
 export const fetchAdminBookings = async (token) => {
+
   const res = await fetch(`${API_BASE}/bookings`, {
     headers: {
       'Authorization': `Bearer ${token}`

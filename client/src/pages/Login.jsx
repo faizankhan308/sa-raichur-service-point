@@ -152,7 +152,14 @@ const Login = () => {
               )}
             </button>
 
-            <div className="border-t border-slate-100 pt-4 mt-2">
+            <div className="border-t border-slate-100 pt-4 mt-2 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => navigate('/admin-reset')}
+                className="w-full text-xs font-semibold text-amber-600 hover:text-amber-700 h-8 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                🔑 Forgot credentials? Reset them securely
+              </button>
               <button
                 type="button"
                 onClick={() => {

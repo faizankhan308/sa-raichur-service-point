@@ -143,8 +143,63 @@ const login = async (req, res) => {
   }
 };
 
+
+// Reset admin credentials using the secret ADMIN_RESET_KEY from .env
+// Bookings and services data are NEVER touched by this operation.
+const resetCredentials = async (req, res) => {
+  try {
+    const { resetKey, newUsername, newPassword } = req.body;
+
+    if (!resetKey || !newUsername || !newPassword) {
+      return res.status(400).json({ error: 'Reset key, new username, and new password are all required.' });
+    }
+
+    const ADMIN_RESET_KEY = process.env.ADMIN_RESET_KEY;
+    if (!ADMIN_RESET_KEY) {
+      return res.status(500).json({ error: 'Reset feature is not configured on the server. Please add ADMIN_RESET_KEY to your .env file.' });
+    }
+
+    if (resetKey !== ADMIN_RESET_KEY) {
+      return res.status(401).json({ error: 'Invalid reset key. Access denied.' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'New password must be at least 6 characters long.' });
+    }
+
+    if (getIsConnected()) {
+      // MongoDB mode: delete existing admin accounts and register the new one
+      await Admin.deleteMany({}); // Only deletes admin credentials, NOT bookings or services
+      const newAdmin = new Admin({ username: newUsername, password: newPassword });
+      await newAdmin.save();
+
+      const token = jwt.sign(
+        { id: newAdmin._id, username: newAdmin.username },
+        ACTUAL_JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+      return res.json({ success: true, token, username: newAdmin.username, message: 'Admin credentials have been reset successfully.' });
+    } else {
+      // Offline mock mode: overwrite admins_mock.json with the new credentials
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+      saveMockAdmins([{ username: newUsername, password: hashedPassword }]);
+
+      const token = jwt.sign(
+        { id: 'mock-id-admin', username: newUsername },
+        ACTUAL_JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+      return res.json({ success: true, token, username: newUsername, message: 'Admin credentials have been reset successfully (Offline Mode).' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   login,
   seedAdmin,
-  checkAdminStatus
+  checkAdminStatus,
+  resetCredentials
 };
