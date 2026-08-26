@@ -397,9 +397,9 @@ const Home = () => {
             {/* Logo & Business Name Row */}
             <div className="flex items-center gap-3">
               <img 
-                src="/logo.jpg" 
+                src="/logo.png" 
                 alt="S A Raichur Service Point Official Logo" 
-                className="h-14 w-14 rounded-full object-contain border border-[#d4af37]/35 shadow-md bg-[#0c1938]"
+                className="h-16 w-auto rounded-xl object-contain border border-[#d4af37]/35 shadow-md bg-white p-1"
               />
               <div className="flex flex-col">
                 <span className="text-[10px] font-extrabold text-[#d4af37] uppercase tracking-widest leading-none">Official Identity</span>
@@ -425,7 +425,7 @@ const Home = () => {
             {/* Primary Customer Actions */}
             <div className="flex flex-wrap items-center gap-3">
               <button
-                onClick={scrollToBookingFlow}
+                onClick={() => navigate('/book-service')}
                 className="bg-accent hover:bg-accent-hover text-white text-xs font-black h-11 px-6 rounded-xl shadow-lg transition-all duration-200 active:scale-95 cursor-pointer"
               >
                 Book a Service
@@ -846,9 +846,9 @@ const Home = () => {
               <div className="absolute top-0 right-0 h-16 w-16 bg-accent-light rounded-bl-3xl -z-0 opacity-40" />
               <div className="relative z-10">
                 <img 
-                  src="/logo.jpg" 
+                  src="/logo.png" 
                   alt="S A Raichur Service Point Official Logo" 
-                  className="w-56 h-56 sm:w-64 sm:h-64 mx-auto rounded-full object-contain shadow-xl border-4 border-[#d4af37]/45 transition-transform duration-300 hover:scale-102"
+                  className="w-48 h-auto sm:w-56 mx-auto rounded-2xl object-contain shadow-md border-2 border-slate-200/80 p-2 bg-white transition-transform duration-300 hover:scale-102"
                 />
               </div>
               <div className="space-y-2 relative z-10">

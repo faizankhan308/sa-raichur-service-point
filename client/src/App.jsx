@@ -18,6 +18,7 @@ import Booking from './pages/Booking';
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
 import MyBookings from './pages/MyBookings';
+import BookService from './pages/BookService';
 
 // Auth Guard for admin portal paths
 const ProtectedRoute = ({ children }) => {
@@ -34,6 +35,7 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/book-service" element={<BookService />} />
             <Route path="/services" element={<Services />} />
             <Route path="/service/:id" element={<ServiceDetails />} />
             <Route path="/search" element={<SearchResults />} />

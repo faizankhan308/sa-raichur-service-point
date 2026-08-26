@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Search, ShoppingCart, User, MapPin, Menu, X, LogOut, ChevronDown, Bell, HelpCircle, Lock } from 'lucide-react';
+import { Search, ShoppingCart, User, MapPin, Menu, X, LogOut, ChevronDown, Bell, HelpCircle, Lock, ArrowRight } from 'lucide-react';
 import { selectCartCount } from '../redux/cartSlice';
 import { selectAuth, logout } from '../redux/authSlice';
 import { selectBookings, fetchBookingsSuccess } from '../redux/bookingSlice';
@@ -157,11 +157,11 @@ const Navbar = () => {
         <Link to="/" className="flex items-center gap-3 group shrink-0">
           <div className="relative group-hover:scale-105 transition-transform duration-200 shrink-0">
             <img 
-              src="/logo.jpg" 
+              src="/logo.png" 
               alt="S A Raichur Service Point Logo" 
-              className="h-11 w-11 rounded-full object-contain border border-[#d4af37]/35 shadow-md shadow-slate-900/5 bg-[#0c1938]"
+              className="h-12 w-auto rounded-md object-contain border border-slate-200/80 shadow-sm bg-white p-0.5"
             />
-            <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 border border-white shadow-sm" />
+            <div className="absolute -bottom-0.5 -right-1 h-2.5 w-2.5 rounded-full bg-emerald-500 border border-white shadow-sm" />
           </div>
           
           <div className="flex flex-col select-none">
@@ -231,7 +231,14 @@ const Navbar = () => {
             <Link to="/services" className="hover:text-slate-900 transition-colors">Services</Link>
             <Link to="/services?category=cleaning" className="hover:text-slate-900 transition-colors">Cleaning</Link>
             <Link to="/services?category=maintenance" className="hover:text-slate-900 transition-colors">Maintenance</Link>
-            <Link to="/my-bookings" className="text-accent hover:text-accent-hover transition-colors font-extraboldNormal">Track Booking</Link>
+            <Link to="/my-bookings" className="text-accent hover:text-accent-hover transition-colors font-extraboldNormal mr-2">Track Booking</Link>
+            <Link 
+              to="/book-service" 
+              className="bg-[#0052cc] hover:bg-[#004099] text-white text-xs font-black px-4.5 py-2.5 rounded-xl transition-all shadow-md select-none hover:scale-[1.02] active:scale-98 flex items-center gap-1.5 shrink-0 uppercase tracking-normal"
+            >
+              <span>Book a Service</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
           </nav>
 
           {/* Cart Icon Container (Customer Mode Only) */}
@@ -372,6 +379,7 @@ const Navbar = () => {
           </form>
 
           <nav className="flex flex-col space-y-2.5 font-bold text-xs uppercase tracking-wider text-slate-650">
+            <Link to="/book-service" onClick={() => setMobileMenuOpen(false)} className="bg-[#0052cc] text-white text-center hover:bg-[#004099] px-3 py-2.5 rounded-lg transition-all font-extrabold block uppercase tracking-normal">Book a Service</Link>
             <Link to="/services" onClick={() => setMobileMenuOpen(false)} className="hover:text-slate-950 hover:bg-slate-50 px-3 py-2 rounded-lg transition-all">All Services</Link>
             <Link to="/services?category=cleaning" onClick={() => setMobileMenuOpen(false)} className="hover:text-slate-950 hover:bg-slate-50 px-3 py-2 rounded-lg transition-all">Cleaning</Link>
             <Link to="/services?category=maintenance" onClick={() => setMobileMenuOpen(false)} className="hover:text-slate-950 hover:bg-slate-50 px-3 py-2 rounded-lg transition-all">Maintenance</Link>
