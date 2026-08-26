@@ -154,10 +154,8 @@ const resetCredentials = async (req, res) => {
       return res.status(400).json({ error: 'Reset key, new username, and new password are all required.' });
     }
 
-    const ADMIN_RESET_KEY = process.env.ADMIN_RESET_KEY;
-    if (!ADMIN_RESET_KEY) {
-      return res.status(500).json({ error: 'Reset feature is not configured on the server. Please add ADMIN_RESET_KEY to your .env file.' });
-    }
+    // Use env key if set, otherwise fall back to built-in default
+    const ADMIN_RESET_KEY = process.env.ADMIN_RESET_KEY || 'SAraichur@Reset2024';
 
     if (resetKey !== ADMIN_RESET_KEY) {
       return res.status(401).json({ error: 'Invalid reset key. Access denied.' });
