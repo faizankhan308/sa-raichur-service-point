@@ -13,15 +13,17 @@ const Services = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryParam = searchParams.get('category') || 'all';
 
-  const [servicesList, setServicesList] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [servicesList, setServicesList] = useState(fallbackServices);
+  const [loading, setLoading] = useState(false);
 
   const cartItems = useSelector(selectCartItems);
   const cartTotal = useSelector(selectCartTotal);
 
   useEffect(() => {
     const getServicesData = async () => {
-      setLoading(true);
+      if (servicesList.length === 0) {
+        setLoading(true);
+      }
       try {
         const data = await fetchServices();
         if (data.success && data.services.length > 0) {
@@ -150,7 +152,7 @@ const Services = () => {
       </div>
 
       {/* Main Dual-Column Layout */}
-      {loading ? (
+      {loading && filteredServices.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 gap-3">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-slate-900" />
           <span className="text-slate-400 text-xs font-semibold">Loading service details...</span>

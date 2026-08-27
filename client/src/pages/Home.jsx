@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Star, ShieldCheck, Sparkles, Wrench, Settings, ChevronRight, Phone, MessageSquare, Plus, Minus, Search, MapPin, Award, CheckCircle2, ChevronDown, Users, Clock, ShieldAlert, Lock } from 'lucide-react';
 import { fetchServices, fetchReviews, submitReview, fetchGoogleReviews } from '../services/api';
 import { services as fallbackServices, getOrderedServices } from '../data/services';
+import { fallbackReviews } from '../data/reviews';
 import { spotlightBanners, noteworthyBanners } from '../data/spotlight';
 import { addToCart, removeFromCart, selectCartItems } from '../redux/cartSlice';
 
@@ -12,8 +13,8 @@ const Home = () => {
   const dispatch = useDispatch();
   const videoRef = useRef(null);
 
-  const [servicesList, setServicesList] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [servicesList, setServicesList] = useState(fallbackServices);
+  const [loading, setLoading] = useState(false);
   const [heroSearchQuery, setHeroSearchQuery] = useState('');
   const [heroSuggestions, setHeroSuggestions] = useState([]);
   const [showHeroSuggestions, setShowHeroSuggestions] = useState(false);
@@ -22,8 +23,8 @@ const Home = () => {
   const [videoLoaded, setVideoLoaded] = useState(false);
 
   // Dynamic Customer Reviews State
-  const [reviewsList, setReviewsList] = useState([]);
-  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [reviewsList, setReviewsList] = useState(fallbackReviews);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
   const [reviewName, setReviewName] = useState('');
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState('');
@@ -47,7 +48,9 @@ const Home = () => {
 
   // Load reviews from API
   const loadReviewsData = async () => {
-    setReviewsLoading(true);
+    if (reviewsList.length === 0) {
+      setReviewsLoading(true);
+    }
     try {
       const data = await fetchReviews();
       if (data.success && data.reviews) {
@@ -611,7 +614,7 @@ const Home = () => {
             </button>
           </div>
 
-          {loading ? (
+          {loading && servicesList.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-14 gap-2">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
               <span className="text-slate-400 text-xs font-semibold">Loading services...</span>
@@ -921,7 +924,7 @@ const Home = () => {
               <div className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm text-center space-y-4">
                 <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider">Overall Rating</h4>
                 
-                {reviewsLoading ? (
+                {reviewsLoading && reviewsList.length === 0 ? (
                   <div className="py-4 text-xs font-semibold text-slate-400">Loading summary...</div>
                 ) : reviewsList.length > 0 ? (
                   (() => {
@@ -1116,7 +1119,7 @@ const Home = () => {
                 </p>
               </div>
 
-              {reviewsLoading ? (
+              {reviewsLoading && reviewsList.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 gap-2 bg-white rounded-3xl border border-slate-200/60 p-8 shadow-sm">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
                   <span className="text-slate-400 text-xs font-semibold">Loading reviews...</span>

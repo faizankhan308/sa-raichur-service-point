@@ -12,8 +12,8 @@ const ServiceDetails = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   
-  const [service, setService] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [service, setService] = useState(() => fallbackServices.find(s => s.id === id) || null);
+  const [loading, setLoading] = useState(() => !fallbackServices.some(s => s.id === id));
   const [error, setError] = useState(null);
 
   const cartItems = useSelector(selectCartItems);
@@ -111,13 +111,31 @@ const ServiceDetails = () => {
   const currentPrice = getComputedPrice();
 
   useEffect(() => {
-    const getDetails = async () => {
+    const fallbackItem = fallbackServices.find(s => s.id === id);
+    if (fallbackItem) {
+      setService(fallbackItem);
+      setLoading(false);
+    } else {
+      setService(null);
       setLoading(true);
-      setError(null);
+    }
+    setError(null);
+
+    const getDetails = async () => {
       try {
         const data = await fetchServiceById(id);
         if (data.success && data.service) {
-          setService(data.service);
+          setService(prev => {
+            const fallback = fallbackServices.find(s => s.id === id) || {};
+            return {
+              ...fallback,
+              ...data.service,
+              id: id,
+              name: fallback.name || data.service.name,
+              category: fallback.category || data.service.category,
+              image: fallback.image || data.service.image
+            };
+          });
         } else {
           loadFallbackDetails();
         }

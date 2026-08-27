@@ -10,28 +10,48 @@ const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('query') || '';
 
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [results, setResults] = useState(() => {
+    if (!query.trim()) return [];
+    const filterTerm = query.toLowerCase();
+    return fallbackServices.filter(s => 
+      s.name.toLowerCase().includes(filterTerm) || 
+      s.description.toLowerCase().includes(filterTerm) ||
+      s.category.toLowerCase().includes(filterTerm)
+    );
+  });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const performSearch = async () => {
-      if (!query.trim()) {
-        setResults([]);
-        setLoading(false);
-        return;
-      }
-      
+    if (!query.trim()) {
+      setResults([]);
+      setLoading(false);
+      return;
+    }
+    
+    const filterTerm = query.toLowerCase();
+    const initialMatches = fallbackServices.filter(s => 
+      s.name.toLowerCase().includes(filterTerm) || 
+      s.description.toLowerCase().includes(filterTerm) ||
+      s.category.toLowerCase().includes(filterTerm)
+    );
+
+    setResults(initialMatches);
+    if (initialMatches.length === 0) {
       setLoading(true);
+    } else {
+      setLoading(false);
+    }
+
+    const performSearch = async () => {
       try {
         const data = await fetchServices();
         if (data.success && data.services.length > 0) {
-          // Align database results with our strict 15 services list
           const ordered = getOrderedServices(data.services);
-          const filterTerm = query.toLowerCase();
+          const term = query.toLowerCase();
           const matches = ordered.filter(s => 
-            s.name.toLowerCase().includes(filterTerm) || 
-            s.description.toLowerCase().includes(filterTerm) ||
-            s.category.toLowerCase().includes(filterTerm)
+            s.name.toLowerCase().includes(term) || 
+            s.description.toLowerCase().includes(term) ||
+            s.category.toLowerCase().includes(term)
           );
           setResults(matches);
         } else {
@@ -82,7 +102,7 @@ const SearchResults = () => {
         </p>
       </div>
 
-      {loading ? (
+      {loading && results.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 gap-3">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-slate-900" />
           <span className="text-slate-400 text-xs font-semibold">Querying services catalog...</span>
