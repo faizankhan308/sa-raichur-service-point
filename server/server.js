@@ -1,8 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
-const fs = require('fs');
-require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 
 const { connectDB } = require('./config/db');
 const { seedServices } = require('./controllers/serviceController');
@@ -29,7 +27,17 @@ const initApp = async () => {
 initApp();
 
 // Middlewares
-app.use(cors());
+// Allow requests from the Vercel frontend domain (set ALLOWED_ORIGIN on Render).
+// Falls back to open CORS in development so local dev proxy continues to work.
+const corsOptions = {
+  origin: process.env.ALLOWED_ORIGIN
+    ? process.env.ALLOWED_ORIGIN.split(',')
+    : true, // allow all origins when env var is not set
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // API Routes
@@ -38,21 +46,14 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/reviews', reviewRoutes);
 
-// Static client path serving
-const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
-app.use(express.static(clientBuildPath));
-
-// Fallback to React index or generic welcome screen
-app.get('*', (req, res) => {
-  const indexPath = path.join(clientBuildPath, 'index.html');
-  if (fs.existsSync(indexPath)) {
-    res.sendFile(indexPath);
-  } else {
-    res.json({
-      message: '🚀 S A Raichur Service Point Server API is running!',
-      frontendStatus: 'Pending client compilation. Run "npm run build" in client directory.'
-    });
-  }
+// API health check — returned for any unmatched route so the server never
+// accidentally serves frontend files. The frontend is hosted on Vercel.
+app.get('/', (req, res) => {
+  res.json({
+    message: '🚀 S A Raichur Service Point API is running!',
+    status: 'ok',
+    docs: 'Frontend is served separately via Vercel.',
+  });
 });
 
 // Error Middleware
